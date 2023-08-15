@@ -1,0 +1,12 @@
+html, body {
+    font-family: 'Poppins', Arial, Helvetica, sans-serif;
+}
+
+button {
+    -webkit-tap-highlight-color: none;
+    outline: none;
+}
+
+button:focus-within, button:focus {
+    outline: none;
+}
