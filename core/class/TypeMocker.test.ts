@@ -2,6 +2,7 @@
 import { assertThrows } from "https://deno.land/std@0.198.0/assert/mod.ts";
 import Interface2Mock from "@core/class/TypeMocker.ts";
 import { assertEquals } from "https://deno.land/std@0.198.0/assert/assert_equals.ts";
+import { assert } from "https://deno.land/std@0.140.0/_util/assert.ts";
 
 Deno.test("Providing no interface", () => {
   assertThrows(() => new Interface2Mock(''), Error, 'No interfaces or types were found');
@@ -177,4 +178,19 @@ Deno.test("Providing a nested type in an interface", () => {
   const specificObjGreetingMocked = mock.buildMock('Greeting') as unknown as { hello: string, cursed: { damn: string}};
   assertEquals(Object.keys(specificObjGreetingMocked), Object.keys({ hello: null, cursed: null }));
   assertEquals(Object.keys(specificObjGreetingMocked.cursed), Object.keys({ damn: null }));
+});
+
+Deno.test("Providing a nested array type in an interface", () => {
+  const mock = new Interface2Mock(`interface Greeting {
+    hello: string;
+    cursed: CursedWord[];
+  }
+
+  type CursedWord = {
+    damn: string;
+  }
+  `);
+
+  const objMocked = mock.buildMock('Greeting') as unknown as { hello: string, cursed: { damn: string}[]};
+  assert(objMocked.cursed.length >= 0);
 });

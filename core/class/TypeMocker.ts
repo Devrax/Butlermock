@@ -1,5 +1,6 @@
 import { checkConstant } from "@core/utils/dynamicValue.ts";
 import { validTypes } from "@core/constants/ValidTypes.ts";
+import { rand } from "@core/utils/randNumber.ts";
 
 interface KeyValueObject<T> { [k: string]: T };
 interface TsObject<T> { raw: string, obj: KeyValueObject<T>; isProcess: boolean };
@@ -49,7 +50,7 @@ export default class Interface2Mock {
      * @returns
      */
     #process(obj: TsObject<unknown>) {
-        if(obj == null) return null;
+        if (obj == null) return null;
         const splitEachMember = obj.raw.replace(/(\n|\t|{|}| )/g, '').split(';').filter(Boolean);
         for (const member of splitEachMember) {
             let [keyName, type] = member.split(':');
@@ -58,17 +59,23 @@ export default class Interface2Mock {
             if (validTypes.includes(type)) {
                 obj.obj[keyName] = checkConstant(keyName, type);
             } else {
-                const checkIfThatInterfaceExist = this.#findTypeValue(type);
+                const hashtype = type.replace(/\[\]/, '');
+                const checkIfThatInterfaceExist = this.#findTypeValue(hashtype);
                 if (checkIfThatInterfaceExist) {
-                    const foundInterface = this.#interfacesCaptured[type] ?? this.#typeCaptured[type];
-                    obj.obj[keyName] = checkIfThatInterfaceExist?.isProcess ? checkIfThatInterfaceExist.obj : structuredClone(this.#process(foundInterface));
+                    const foundInterface = this.#interfacesCaptured[hashtype] ?? this.#typeCaptured[hashtype];
+                    const recursiveValue = (t: string) => {
+                        const val = this.#process(foundInterface);
+                        return t.includes('[]') ? new Array(rand(5)).fill(structuredClone(val)) : val
+                    }
+                    const value = checkIfThatInterfaceExist?.isProcess ? checkIfThatInterfaceExist.obj : recursiveValue(type);
+                    obj.obj[keyName] = value;
                 } else {
                     obj.obj[keyName] = null;
                 }
             }
         }
         obj.isProcess = true;
-        return obj.obj;
+        return structuredClone(obj.obj);
     }
 
     #findTypeValue(type: string) {

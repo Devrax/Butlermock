@@ -1,9 +1,9 @@
 import { fakerEN } from "https://esm.sh/@faker-js/faker@8.0.2";
 import StringPlaceholder from "@core/utils/strings.ts";
+import { rand } from "@core/utils/randNumber.ts";
 const faker = fakerEN;
 
 const forStrings = new StringPlaceholder(faker);
-const rand = (max: number) => Math.floor(Math.random() * max);
 
 export const checkConstant = (name: string, type: string) => {
     switch(type) {
