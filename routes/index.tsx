@@ -6,9 +6,13 @@ export default function Home() {
       <Head>
         <title>Butlermock</title>
       </Head>
-      <main>
-
-      </main>
+      <body>
+        <header>
+          <nav>
+            
+          </nav>
+        </header>
+      </body>
     </>
   );
 }
