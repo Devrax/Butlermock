@@ -1,4 +1,5 @@
 import { checkConstant } from "@core/utils/dynamicValue.ts";
+import { validTypes } from "@core/constants/ValidTypes.ts";
 
 
 interface KeyValueObject<T> { [k: string]: T };
@@ -6,7 +7,7 @@ interface TsObject<T> { raw: string, obj: KeyValueObject<T>; isProcess: boolean 
 
 export default class Interface2Mock {
 
-    #json: KeyValueObject<unknown> | null = null;
+    #json: KeyValueObject<unknown> = {};
     #interfacePatternRegex = /interface(([A-Za-z0-9 ]+)({(\n.+)+))/g;
     #typePatternRegex = /type(([A-Za-z0-9 ]+)( ?= ?){(\n.+)+)/g;
 
@@ -42,21 +43,24 @@ export default class Interface2Mock {
         if(typesTaken == null && interfacesTaken == null) throw new Error("No interfaces or types were found");
     }
 
+    /**
+     * This function process map each interface or types and creates the mock object assigning each value meeting its type one by one
+     * is recursive
+     * @param obj 
+     * @returns 
+     */
     #process(obj: TsObject<unknown>) {
         const splitEachMember = obj.raw.replace(/(\n|\t|{|})/g, '').split(';').filter(Boolean);
         for(const member of splitEachMember) {
             let [keyName, type] = member.split(':');
             type = type == null ? (`${type}`).toLocaleLowerCase() : type.trim();
-            const isArray = type.includes('[]');
-            type = isArray ? type.replace('[]', '') : type;
             keyName = keyName.replace('?', '');
-
-            if(['string', 'number', 'boolean', 'bigint', 'null', 'undefined', 'symbol', 'Date'].includes(type)) {
-                obj.obj[keyName] = checkConstant(keyName, type, isArray);
+            if(validTypes.includes(type)) {
+                obj.obj[keyName] = checkConstant(keyName, type);
             } else {
                 const checkIfThatInterfaceExist = this.#findTypeValue(type);
                 if(checkIfThatInterfaceExist) {
-                    obj.obj[keyName] = checkIfThatInterfaceExist?.isProcess ? checkIfThatInterfaceExist.obj : this.#process(this.#interfacesCaptured[type]);
+                    obj.obj[keyName] = checkIfThatInterfaceExist?.isProcess ? checkIfThatInterfaceExist.obj : structuredClone(this.#process(this.#interfacesCaptured[type]));
                 } else {
                     obj.obj[keyName] = null;
                 }
@@ -79,7 +83,12 @@ export default class Interface2Mock {
             const selectedInterface = this.#interfacesCaptured[rootTypeInterface];
             return selectedInterface ? selectedInterface.obj : this.#typeCaptured[rootTypeInterface].obj;
         }
-        return Object.values(this.#interfacesCaptured)[0].obj
+
+        const iterateMockedInterface = (tsObj: KeyValueObject<TsObject<unknown>>) => Object.entries(tsObj).forEach(obj => this.#json[obj[0]] = obj[1].obj);
+        iterateMockedInterface(this.#interfacesCaptured);
+        iterateMockedInterface(this.#typeCaptured);
+        
+        return structuredClone(this.#json);
     }
 
 }
