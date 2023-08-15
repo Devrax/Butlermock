@@ -173,7 +173,12 @@ const mock = new Interface2Mock(`interface Greeting {
 
 # Status
 
--[x] Interfaces -[x] Interfaces with nested interfaces/types -[ ] Interfaces
-that extends from other interfaces/types -[ ] Generic Interfaces -[ ] Generic
-Interfaces that extends from other interfaces/types -[ ] Primitive Type -[x]
-Type object -[x] Type with nested interfaces/types -[ ] Generic Type
+- [x] Interfaces
+- [x] Interfaces with nested interfaces/types
+- [ ] Interfaces that extends from other interfaces/types
+- [ ] Generic Interfaces
+- [ ] Generic Interfaces that extends from other interfaces/types
+- [ ] Primitive Type
+- [x] Type object
+- [x] Type with nested interfaces/types
+- [ ] Generic Type
