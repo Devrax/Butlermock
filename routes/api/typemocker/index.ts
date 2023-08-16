@@ -9,7 +9,7 @@ export const handler: Handlers = {
             return new Response(JSON.stringify(prepareInterface.buildMock(content.mustReturn ?? '')), { status: 200, headers: { 'Content-type': 'application/json'}});
         } catch(err) {
             console.error(err);
-            return new Response(JSON.stringify({ error: err }), { status: 500, headers: { 'Content-Type': 'application/json'}});
+            return new Response(JSON.stringify({ error: err?.message }), { status: 500, headers: { 'Content-Type': 'application/json'}});
         }
     }
 }
