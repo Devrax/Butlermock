@@ -2,11 +2,11 @@ html, body {
     font-family: 'Poppins', Arial, Helvetica, sans-serif;
 }
 
-button {
+button, select {
     -webkit-tap-highlight-color: none;
     outline: none;
 }
 
-button:focus-within, button:focus {
+button:focus-within, button:focus, select:focus, select:focus-within {
     outline: none;
 }

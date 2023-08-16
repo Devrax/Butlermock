@@ -1,4 +1,3 @@
-// url_test.ts
 import { assertThrows } from "https://deno.land/std@0.198.0/assert/mod.ts";
 import Interface2Mock from "@core/class/TypeMocker.ts";
 import { assertEquals } from "https://deno.land/std@0.198.0/assert/assert_equals.ts";
@@ -194,3 +193,25 @@ Deno.test("Providing a nested array type in an interface", () => {
   const objMocked = mock.buildMock('Greeting') as unknown as { hello: string, cursed: { damn: string}[]};
   assert(objMocked.cursed.length >= 0);
 });
+
+Deno.test("Extra test", () => {
+  const mock = new Interface2Mock(`interface FoundationContact {
+    type: 'tel' | string;
+    displayValue: string;
+    value: string;
+    urlScheme: 'tel:+' | 'mailTo' | string;
+  }
+  
+  export interface FoundationInformation {
+    id: string;
+    title: string;
+    hasRNC?: boolean;
+    contacts: FoundationContact[];
+    receivings: string[];
+    description: string;
+    location: string;
+  }`);
+
+  const objMocked = mock.buildMock();
+  assert(objMocked);
+})

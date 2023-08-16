@@ -5,13 +5,13 @@ const faker = fakerEN;
 
 const forStrings = new StringPlaceholder(faker);
 
-export const checkConstant = (name: string, type: string) => {
+export const checkConstant = (name: string, type: string, anyReturn: unknown = null) => {
     switch(type) {
         // Primitives
         case "string":
-            return forStrings.checkStringName(name) ?? faker.lorem.slug(Math.floor(Math.random() * 5));
+            return forStrings.checkStringName(name) ?? faker.lorem.slug(rand(5, 0));
         case "boolean":
-            return Boolean(Math.floor(Math.random() * 2));
+            return Boolean(rand(2,0));
         case "number":
         case "bigInt":
             return faker.number[type === "bigInt" ? 'bigInt' : 'int']();
@@ -25,16 +25,19 @@ export const checkConstant = (name: string, type: string) => {
         case "string[]":
             return forStrings.checkStringName(name, true);
         case "boolean[]":
-            return new Array(rand(10)).fill('.').map(b => !!rand(2));
+            return new Array(rand(10)).fill('.').map(b => !!rand(2, 0));
         case "number[]":
         case "bigint[]":
-            return new Array(rand(10)).fill('.').map(n => type === 'bigint[]' ? BigInt(rand(10)) : rand(10));
+            return new Array(rand(10)).fill('.').map(n => type === 'bigint[]' ? BigInt(rand(10, 0)) : rand(10, 0));
         case 'null[]':
         case 'undefined[]':
-            return new Array(rand(5)).fill(null);
+            return new Array(rand(5, 0)).fill(null);
         // Array non-primitive
         case 'Date[]':
-            return new Array(rand(10)).fill('.').map((_) => faker.date.anytime())
+            return new Array(rand(10, 0)).fill('.').map((_) => faker.date.anytime())
+        case 'any':
+        case 'any[]':
+            return anyReturn;
         default:
             return null;
     }

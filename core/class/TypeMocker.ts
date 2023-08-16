@@ -1,6 +1,6 @@
 import { checkConstant } from "@core/utils/dynamicValue.ts";
-import { validTypes } from "@core/constants/ValidTypes.ts";
 import { rand } from "@core/utils/randNumber.ts";
+import { typeValidation } from "@core/utils/typeValidation.ts";
 
 interface KeyValueObject<T> { [k: string]: T };
 interface TsObject<T> { raw: string, obj: KeyValueObject<T>; isProcess: boolean };
@@ -14,13 +14,13 @@ export default class Interface2Mock {
     #interfacesCaptured: KeyValueObject<TsObject<unknown>> = {};
     #typeCaptured: KeyValueObject<TsObject<unknown>> = {};
 
-    constructor(private interfaceReference: string) {
+    constructor(private interfaceReference: string, private anyReturn: unknown = null) {
         this.#captureTypesAndInterfaces(this.interfaceReference);
         [...Object.values(this.#interfacesCaptured), ...Object.values(this.#typeCaptured)].filter(Boolean).forEach(obj => this.#process(obj));
     }
 
     #captureTypesAndInterfaces(str: string) {
-        str = str.replace(/\n( +)/g, '').replace(/}/g, '}\n'); //Remove any whitespace after line break
+        str = str.replace(/\n( +)/g, '').replace(/}/g, '}\n').replace(/;\n/g, ';'); //Remove any whitespace after line break
         const interfacesTaken = str.match(this.#interfacePatternRegex);
         const typesTaken = str.match(this.#typePatternRegex);
 
@@ -38,6 +38,7 @@ export default class Interface2Mock {
 
             }
         }
+
         if (interfacesTaken) reusableIterator(interfacesTaken, 'interface(([A-Za-z0-9 ]+)({)(.+)+)(})', this.#interfacesCaptured);
         if (typesTaken) reusableIterator(typesTaken, 'type(([A-Za-z0-9 ]+)= ?)({)(.+)+(})', this.#typeCaptured);
         if (typesTaken == null && interfacesTaken == null) throw new Error("No interfaces or types were found");
@@ -56,10 +57,11 @@ export default class Interface2Mock {
             let [keyName, type] = member.split(':');
             type = type == null ? (`${type}`).toLocaleLowerCase() : type.trim();
             keyName = keyName.replace('?', '');
-            if (validTypes.includes(type)) {
-                obj.obj[keyName] = checkConstant(keyName, type);
+            const deepTypeValid = typeValidation(type);
+            if (deepTypeValid.isNotCustom) {
+                obj.obj[keyName] = deepTypeValid.value ?? checkConstant(keyName, deepTypeValid.type, this.anyReturn);
             } else {
-                const hashtype = type.replace(/\[\]/, '');
+                const hashtype = deepTypeValid.type.replace(/\[\]/, '');
                 const checkIfThatInterfaceExist = this.#findTypeValue(hashtype);
                 if (checkIfThatInterfaceExist) {
                     const foundInterface = this.#interfacesCaptured[hashtype] ?? this.#typeCaptured[hashtype];
@@ -67,8 +69,8 @@ export default class Interface2Mock {
                         const val = this.#process(foundInterface);
                         return t.includes('[]') ? new Array(rand(5)).fill(structuredClone(val)) : val
                     }
-                    const value = checkIfThatInterfaceExist?.isProcess ? checkIfThatInterfaceExist.obj : recursiveValue(type);
-                    obj.obj[keyName] = value;
+                    const value = checkIfThatInterfaceExist?.isProcess ? checkIfThatInterfaceExist.obj : recursiveValue(deepTypeValid.type);
+                    obj.obj[keyName] = deepTypeValid.type.includes('[]') ? Array.isArray(value) ? value : [value]: value;
                 } else {
                     obj.obj[keyName] = null;
                 }

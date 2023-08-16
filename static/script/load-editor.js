@@ -1,8 +1,10 @@
 // require is provided by loader.min.js.
+var theEditor = null;
+var previewer = null;
 require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.1/min/vs' }});
 
 require(["vs/editor/editor.main"], () => {
-  monaco.editor.create(document.getElementById('container'), {
+  theEditor = monaco.editor.create(document.getElementById('container'), {
     value: `interface GithubUser {
       login: string;
       id: number;
@@ -43,4 +45,14 @@ require(["vs/editor/editor.main"], () => {
       enabled: false
     }
   });
+
+  previewer = monaco.editor.create(document.getElementById('preview-code'), {
+    value: ``,
+    language: 'json',
+    theme: 'vs-dark',
+    readOnly: true,
+    minimap: {
+        enabled: false
+    }
+})
 });

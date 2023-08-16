@@ -3,13 +3,14 @@ import { Faker } from "https://esm.sh/@faker-js/faker@8.0.2";
 export default class StringPlaceholder {
     private faker: Faker | null = null;
     private reservedString: any = null;
-    
+
     constructor(faker: Faker) {
         this.faker = faker;
         const fullName = this.faker.person.fullName(),
         firstName = this.faker.person.firstName(),
         middleName = this.faker.person.middleName(),
-        lastName = this.faker.person.lastName();
+        lastName = this.faker.person.lastName(),
+        address = this.faker.location.streetAddress()
 
         this.reservedString = {
             name: fullName,
@@ -21,7 +22,14 @@ export default class StringPlaceholder {
             middle_name: middleName,
             lastName: lastName,
             last_name: lastName,
-            homepage: this.faker.internet.url()
+            homepage: this.faker.internet.url(),
+            address: address,
+            first_address: address,
+            primaryAddress: address,
+            firstAddress: address,
+            location: this.faker.location.country(),
+            bio: this.faker.lorem.paragraph(),
+            description: this.faker.lorem.paragraph()
         }
     }
 
