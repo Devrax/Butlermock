@@ -1,4 +1,5 @@
 import { useSignal } from "@preact/signals";
+import { useRef, useEffect } from "preact/hooks";
 import EditorResponse from "../components/EditorResponse.tsx";
 declare var theEditor: any;
 declare var previewer: any;
@@ -23,6 +24,7 @@ const fetchTransformation = async (
 };
 
 export default function EditorView() {
+  const inputRef = useRef<HTMLInputElement>(null);
   const isLoading = useSignal(false);
   const codeToShow = useSignal("");
   const valueForAny = useSignal<string>("null");
@@ -37,12 +39,17 @@ export default function EditorView() {
     "9",
   ];
 
+  useEffect(() => {
+    inputRef.current!.value = 'GithubUser';
+  } ,[])
+
   const fetchAndShow = async () => {
     try {
       isLoading.value = true;
       const code = await fetchTransformation(
         theEditor.getValue(),
         valueForAny.value,
+        inputRef.current!.value
       );
       codeToShow.value = code;
     } finally {
@@ -55,6 +62,7 @@ export default function EditorView() {
   };
 
   const cleanEditors = () => {
+    inputRef.current!.value = '';
     theEditor.setValue("");
     previewer.setValue("");
   };
@@ -62,7 +70,7 @@ export default function EditorView() {
   return (
     <>
       <article>
-        <section class="flex justify-center items-center gap-5">
+        <section class="flex justify-center items-center gap-5 flex-wrap">
           <div class="bg-[white] text-center rounded h-[50px] flex items-center p-2">
             <label for="Any-values">value for any:</label>
             <select
@@ -177,6 +185,11 @@ export default function EditorView() {
               </svg>
             </button>
           </div>
+
+          <div class="bg-[white] text-center rounded h-[50px] flex items-center p-2">
+            <input type="text" class="w-[350px]" ref={inputRef} placeholder="Interface's or Type's name" title="type the exact name of the interface's mock you want"/>
+          </div>
+
         </section>
       </article>
       <article class="w-full h-[70dvh] px-12 py-5 flex">

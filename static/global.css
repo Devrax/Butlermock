@@ -7,7 +7,7 @@ button, select {
     outline: none;
 }
 
-button:focus-within, button:focus, select:focus, select:focus-within {
+button:focus-within, button:focus, select:focus, select:focus-within, input:focus, input:focus-within {
     outline: none;
 }
 
