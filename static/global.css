@@ -10,3 +10,10 @@ button, select {
 button:focus-within, button:focus, select:focus, select:focus-within {
     outline: none;
 }
+
+button[disabled] {
+    opacity: 0.5;
+    user-select: none;
+    cursor: none;
+    pointer-events: none;
+}
