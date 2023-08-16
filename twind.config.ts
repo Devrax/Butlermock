@@ -1,9 +1,11 @@
 import { Options } from "$fresh/plugins/twind.ts";
+import * as Colors from "twind/colors";
 
 export default {
   selfURL: import.meta.url,
   theme: {
     colors: {
+      ...Colors,
       'monaco': {
         '50': '#f6f6f6',
         '100': '#e7e7e7',

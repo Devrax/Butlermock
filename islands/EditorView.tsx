@@ -70,7 +70,7 @@ export default function EditorView() {
   return (
     <>
       <article>
-        <section class="flex justify-center items-center gap-5 flex-wrap">
+        <section class="flex justify-center items-center gap-5 flex-wrap my-3">
           <div class="bg-[white] text-center rounded h-[50px] flex items-center p-2">
             <label for="Any-values">value for any:</label>
             <select
