@@ -61,7 +61,7 @@ export default class Interface2Mock {
             if (deepTypeValid.isNotCustom) {
                 obj.obj[keyName] = deepTypeValid.value ?? checkConstant(keyName, deepTypeValid.type, this.anyReturn);
             } else {
-                const hashtype = deepTypeValid.type.replace(/\[\]/, '');
+                const hashtype = String(deepTypeValid.type).replace(/\[\]/, '');
                 const checkIfThatInterfaceExist = this.#findTypeValue(hashtype);
                 if (checkIfThatInterfaceExist) {
                     const foundInterface = this.#interfacesCaptured[hashtype] ?? this.#typeCaptured[hashtype];

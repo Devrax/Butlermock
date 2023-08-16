@@ -41,6 +41,8 @@ require(["vs/editor/editor.main"], () => {
     }`,
     language: 'typescript',
     theme: 'vs-dark',
+    autoIndent: true,
+    formatOnPaste: true,
     minimap: {
       enabled: false
     }
