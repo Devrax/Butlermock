@@ -14,7 +14,7 @@ export default function EditorResponse({ codeToShow }: EditorResponseProps) {
 
     return (
         <>
-        <section id="preview-code" style="width: 50%; height: 100%;"></section>
+            <section id="preview-code" style="width: 50%; height: 100%;"></section>
         </>
     )
 }

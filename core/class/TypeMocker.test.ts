@@ -2,6 +2,7 @@ import { assertThrows } from "https://deno.land/std@0.198.0/assert/mod.ts";
 import Interface2Mock from "@core/class/TypeMocker.ts";
 import { assertEquals } from "https://deno.land/std@0.198.0/assert/assert_equals.ts";
 import { assert } from "https://deno.land/std@0.140.0/_util/assert.ts";
+import { assertExists } from 'https://deno.land/std@0.198.0/assert/assert_exists.ts';
 
 Deno.test("Providing no interface", () => {
   assertThrows(() => new Interface2Mock(''), Error, 'No interfaces or types were found');
@@ -44,6 +45,64 @@ Deno.test("Providing two interfaces", () => {
 
   const noSpecificObjMocked = mock.buildMock('');
   assertEquals(Object.keys(noSpecificObjMocked), Object.keys({ Greeting: null, CursedWord: null}));
+});
+
+Deno.test("Providing two interfaces - 2", () => {
+  const mock = new Interface2Mock(`interface FoundationContact {
+    type: 'tel' | string;
+    displayValue: string;
+    value: string;
+    urlScheme: 'tel';
+  }
+  
+  export interface FoundationInformation {
+    id: string;
+    title: string;
+    hasRNC?: boolean;
+    contacts: FoundationContact[];
+    receivings: string[];
+    description: string;
+    location: string;
+  }`);
+
+  const objMocked = mock.buildMock();
+  assertEquals(Object.keys(objMocked), Object.keys({ FoundationContact: null, FoundationInformation: null }));
+  assertExists(mock.buildMock('FoundationContact'));
+  assertExists(mock.buildMock('FoundationInformation'));
+  assert(Array.isArray(mock.buildMock('FoundationInformation').contacts));
+  assertEquals(mock.buildMock('FoundationContact').urlScheme, 'tel');
+});
+
+Deno.test("Providing three interfaces with one duplication", () => {
+  const mock = new Interface2Mock(`interface FoundationContact {
+    type: 'tel' | string;
+    displayValue: string;
+    value: string;
+    urlScheme: 'tel';
+  }
+
+  export interface FoundationInformation {
+    id: string;
+    title: string;
+    hasRNC?: boolean;
+    contacts: FoundationContact[];
+    receivings: string[];
+    description: string;
+    location: string;
+  }
+  
+  export interface FoundationInformation {
+    id: string;
+    title: string;
+    hasRNC?: boolean;
+    contacts: FoundationContact[];
+    receivings: string[];
+    description: string;
+    location: string;
+  }`);
+
+  const objMocked = mock.buildMock();
+  assertEquals(Object.keys(objMocked), Object.keys({ FoundationContact: null, FoundationInformation: null }));
 });
 
 Deno.test("Providing nested Interface", () => {
@@ -193,25 +252,3 @@ Deno.test("Providing a nested array type in an interface", () => {
   const objMocked = mock.buildMock('Greeting') as unknown as { hello: string, cursed: { damn: string}[]};
   assert(objMocked.cursed.length >= 0);
 });
-
-Deno.test("Extra test", () => {
-  const mock = new Interface2Mock(`interface FoundationContact {
-    type: 'tel' | string;
-    displayValue: string;
-    value: string;
-    urlScheme: 'tel:+' | 'mailTo' | string;
-  }
-  
-  export interface FoundationInformation {
-    id: string;
-    title: string;
-    hasRNC?: boolean;
-    contacts: FoundationContact[];
-    receivings: string[];
-    description: string;
-    location: string;
-  }`);
-
-  const objMocked = mock.buildMock();
-  assert(objMocked);
-})
