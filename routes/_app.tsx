@@ -11,7 +11,6 @@ export default function App({ Component }: AppProps) {
         <link rel="manifest" href="/favicon/site.webmanifest" />
         <link rel="stylesheet" type="text/css" href="/fonts/poppins.css" />
         <link rel="stylesheet" type="text/css" href="/global.css" />
-        <script async src="//static.getclicky.com/101422815.js"></script>
       </Head>
       <Component />
     </>
