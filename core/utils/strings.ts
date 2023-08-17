@@ -38,6 +38,7 @@ export default class StringPlaceholder {
         if(name.toLowerCase().includes('id')) return this.faker?.string.uuid();
         if(name.toLowerCase().includes('avatar')) return this.faker!.internet.avatar()
         if(name.toLowerCase().includes('url')) return this.faker!.internet.url();
+        if(name.toLowerCase().includes('image') || name.toLocaleLowerCase().includes('img')) return this.faker!.phone.number();
         return this.reservedString[name as keyof typeof this.reservedString];
     }
 
