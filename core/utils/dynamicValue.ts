@@ -9,7 +9,7 @@ export const checkConstant = (name: string, type: string, anyReturn: unknown = n
     switch(type) {
         // Primitives
         case "string":
-            return forStrings.checkStringName(name) ?? faker.lorem.slug(rand(5, 0));
+            return forStrings.checkStringName(name) ?? faker.lorem.slug({ min: 1, max: rand(5, 2)});
         case "boolean":
             return Boolean(rand(2,0));
         case "number":

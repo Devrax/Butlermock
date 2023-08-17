@@ -1,18 +1,26 @@
 import { Faker } from "https://esm.sh/@faker-js/faker@8.0.2";
 
 export default class StringPlaceholder {
-    private faker: Faker | null = null;
-    private reservedString: any = null;
 
-    constructor(faker: Faker) {
-        this.faker = faker;
+    constructor(private faker: Faker) {}
+
+    checkStringName(name: string, isArray = false) {
+        if(isArray) return new Array(Math.floor(Math.random() * 10)).fill('.').map(_ => this.faker?.lorem.slug());
+        if(name.toLowerCase().includes('id')) return this.faker?.string.uuid();
+        if(name.toLowerCase().includes('avatar')) return this.faker!.internet.avatar()
+        if(name.toLowerCase().includes('url')) return this.faker!.internet.url();
+        if(name.toLowerCase().includes('image') || name.toLocaleLowerCase().includes('img')) return this.faker!.image.url();
+        return this.checkReservedString(name);
+    }
+
+    checkReservedString(name: string) {
         const fullName = this.faker.person.fullName(),
         firstName = this.faker.person.firstName(),
         middleName = this.faker.person.middleName(),
         lastName = this.faker.person.lastName(),
-        address = this.faker.location.streetAddress()
+        address = this.faker.location.streetAddress();
 
-        this.reservedString = {
+        return {
             name: fullName,
             full_name: fullName,
             fullName: fullName,
@@ -30,16 +38,9 @@ export default class StringPlaceholder {
             location: this.faker.location.country(),
             bio: this.faker.lorem.paragraph(),
             description: this.faker.lorem.paragraph()
-        }
+        }[name]
     }
 
-    checkStringName(name: string, isArray = false) {
-        if(isArray) return new Array(Math.floor(Math.random() * 10)).fill('.').map(_ => this.faker?.lorem.slug());
-        if(name.toLowerCase().includes('id')) return this.faker?.string.uuid();
-        if(name.toLowerCase().includes('avatar')) return this.faker!.internet.avatar()
-        if(name.toLowerCase().includes('url')) return this.faker!.internet.url();
-        if(name.toLowerCase().includes('image') || name.toLocaleLowerCase().includes('img')) return this.faker!.image.url();
-        return this.reservedString[name as keyof typeof this.reservedString];
-    }
+
 
 }
