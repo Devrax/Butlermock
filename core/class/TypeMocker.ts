@@ -90,7 +90,7 @@ export default class Interface2Mock {
 
     public buildMock(rootTypeInterface = '') {
         if (rootTypeInterface) {
-            if (this.#json[rootTypeInterface] == null) {
+            if (this.#interfacesCaptured[rootTypeInterface] == null && this.#typeCaptured[rootTypeInterface] == null) {
                 throw new Error(`Not matches for key '${rootTypeInterface}' in [${Object.keys({...this.#interfacesCaptured, ...this.#typeCaptured}).join(', ')}]`);
             }
 
