@@ -70,7 +70,7 @@ export default class Interface2Mock {
                         return t.includes('[]') ? new Array(rand(5)).fill(structuredClone(val)) : val
                     }
                     const value = checkIfThatInterfaceExist?.isProcess ? checkIfThatInterfaceExist.obj : recursiveValue(deepTypeValid.type);
-                    obj.obj[keyName] = deepTypeValid.type.includes('[]') ? Array.isArray(value) ? value : [value]: value;
+                    obj.obj[keyName] = deepTypeValid.type.includes('[]') ? Array.isArray(value) ? value : [value] : value;
                 } else {
                     obj.obj[keyName] = null;
                 }
@@ -90,6 +90,10 @@ export default class Interface2Mock {
 
     public buildMock(rootTypeInterface = '') {
         if (rootTypeInterface) {
+            if (this.#json[rootTypeInterface] == null) {
+                throw new Error(`Not matches for key '${rootTypeInterface}' in [${Object.keys({...this.#interfacesCaptured, ...this.#typeCaptured}).join(', ')}]`);
+            }
+
             const selectedInterface = this.#interfacesCaptured[rootTypeInterface];
             return selectedInterface ? selectedInterface.obj : this.#typeCaptured[rootTypeInterface].obj;
         }
