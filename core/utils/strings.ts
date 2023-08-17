@@ -5,11 +5,12 @@ export default class StringPlaceholder {
     constructor(private faker: Faker) {}
 
     checkStringName(name: string, isArray = false) {
-        if(isArray) return new Array(Math.floor(Math.random() * 10)).fill('.').map(_ => this.faker?.lorem.slug());
-        if(name.toLowerCase().includes('id')) return this.faker?.string.uuid();
-        if(name.toLowerCase().includes('avatar')) return this.faker!.internet.avatar()
-        if(name.toLowerCase().includes('url')) return this.faker!.internet.url();
-        if(name.toLowerCase().includes('image') || name.toLocaleLowerCase().includes('img')) return this.faker!.image.url();
+        if(isArray) return new Array(Math.floor(Math.random() * 10)).fill('.').map(_ => this.faker.lorem.slug());
+        if(name.toLowerCase().includes('id')) return this.faker.string.uuid();
+        if(name.toLowerCase().includes('avatar')) return this.faker.internet.avatar()
+        if(name.toLowerCase().includes('url')) return this.faker.internet.url();
+        if(name.toLowerCase().includes('image') || name.toLocaleLowerCase().includes('img')) return this.faker.image.url();
+        if(name.toLowerCase().includes('email')) return this.faker.internet.email();
         return this.checkReservedString(name);
     }
 
@@ -35,6 +36,7 @@ export default class StringPlaceholder {
             first_address: address,
             primaryAddress: address,
             firstAddress: address,
+            mail: this.faker.internet.email(),
             location: this.faker.location.country(),
             bio: this.faker.lorem.paragraph(),
             description: this.faker.lorem.paragraph()
