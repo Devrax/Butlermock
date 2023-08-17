@@ -11,7 +11,7 @@ export default function Home() {
 
         <meta property="og:title" content="Butlermock: Generate Mock Data from typescrypt's interface/type" />
         <meta property="og:description" content="Easily create mock data for your TypeScript interfaces and types using them as JSON schema for building the mocks" />
-        <meta property="og:image" content="/bartender.png" />
+        <meta property="og:image" content="https://butlermock.deno.dev/bartender.png" />
         <meta property="og:url" content="https://butlermock.deno.dev/" />
         <meta property="og:type" content="website" />
         <title>Butlermock</title>
