@@ -15,6 +15,7 @@ export default function Home() {
         <meta property="og:url" content="https://butlermock.deno.dev/" />
         <meta property="og:type" content="website" />
         <title>Butlermock</title>
+        <script async data-id="101422815" src="https://static.getclicky.com/js"></script>
       </Head>
       <body class="bg-monaco-950 min-h-[100dvh]">
         <main>

@@ -6,7 +6,7 @@ export default function Error404() {
     <>
       <Head>
         <title>404 - Page not found</title>
-        <script async src="//static.getclicky.com/101422815.js"></script>
+        <script async data-id="101422815" src="https://static.getclicky.com/js"></script>
       </Head>
       <div class="px-4 py-8 mx-auto bg-[#86efac]">
         <div class="max-w-screen-md mx-auto flex flex-col items-center justify-center">
