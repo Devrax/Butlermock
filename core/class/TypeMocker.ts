@@ -84,10 +84,14 @@ export default class Interface2Mock {
      */
     #process(obj: TsObject<unknown>) {
         if (obj == null) return null;
-        const splitEachMember = obj.raw.replace(/(\n|\t|{|}| )/g, '').split(';').filter(Boolean);
+        const splitEachMember = obj.raw.replace(/(\n|\t|{|}| |readonly )/g, '').split(';').filter(Boolean);
         for (const member of splitEachMember) {
+
+            if(member.match(/\[(.+)\]/g) || member.match(/\((.+)\)/g)) break;
+
             let [keyName, type] = member.split(':');
             type = type == null ? (`${type}`).toLocaleLowerCase() : type.trim();
+            console.log(member, keyName);
             keyName = keyName.replace('?', '');
             const deepTypeValid = typeValidation(type);
             if (deepTypeValid.isNotCustom) {
