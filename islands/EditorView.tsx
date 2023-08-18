@@ -30,13 +30,9 @@ export default function EditorView() {
   const valueForAny = useSignal<string>("null");
   const valuesForAny = [
     "null",
-    "true",
-    "false",
     "{}",
-    "undefined",
-    "lorem ipsum",
     "0",
-    "9",
+    "\"lorem ipsum\""
   ];
 
   useEffect(() => {

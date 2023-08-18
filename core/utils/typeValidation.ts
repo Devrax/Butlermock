@@ -2,7 +2,6 @@ import { validTypes } from "@core/constants/ValidTypes.ts";
 import { rand } from "@core/utils/randNumber.ts";
 
 export const typeValidation = (type: string): { type: string, isNotCustom: boolean, value: string | number | boolean | null} => {
-
     if(type.includes("|")) {
         const splitTypes = type.split("|"),
         findPossibleValues = splitTypes.filter(t => {
@@ -33,6 +32,10 @@ export const typeValidation = (type: string): { type: string, isNotCustom: boole
 
     if(!isNaN(Number(type))) {
         return { type: typeof type, isNotCustom: true, value: Number(type)};
+    }
+
+    if(type === 'true' || type === 'false') {
+        return { type: 'boolean', isNotCustom: true, value: JSON.parse(type)};
     }
 
     return {type, isNotCustom: validTypes.includes(type), value: null};
