@@ -21,6 +21,5 @@ export async function handler(
   req: Request,
   ctx: MiddlewareHandlerContext<State>,
 ) {
-    console.log('klk');
   return allowCORS(await ctx.next(), req);
 }
