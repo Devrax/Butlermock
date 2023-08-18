@@ -7,10 +7,6 @@ with actual data using Fakerjs
 
 > Documentation on develop, in the near future I will expose the endpoints for you to use it within your client application, so, stay on tune 🐒
 
-|branch|test env|desc|status|
-|------|--------|----|------|
-|[feature/support-for-primitives](https://github.com/Devrax/Butlermock/tree/feature/support-for-primitive-types)|https://butlermock--feature-support-for-primit.deno.dev/|Added support for primitives types| Testing |
-
 Table of contents
 =================
 
