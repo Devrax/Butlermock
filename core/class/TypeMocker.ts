@@ -91,7 +91,6 @@ export default class Interface2Mock {
 
             let [keyName, type] = member.split(':');
             type = type == null ? (`${type}`).toLocaleLowerCase() : type.trim();
-            console.log(member, keyName);
             keyName = keyName.replace('?', '');
             const deepTypeValid = typeValidation(type);
             if (deepTypeValid.isNotCustom) {
