@@ -1,7 +1,9 @@
 import { useSignal } from "@preact/signals";
-import { useRef } from "preact/hooks";
+import { useRef, useEffect } from "preact/hooks";
 import EditorResponse from "../components/EditorResponse.tsx";
+
 declare var theEditor: any;
+
 declare var previewer: any;
 
 const fetchTransformation = async (
@@ -59,6 +61,12 @@ export default function EditorView() {
     previewer.setValue("");
   };
 
+  useEffect(() => {
+    setTimeout(() => {
+      theEditor.onDidPaste(() => fetchAndShow());
+    }, 500);
+  }, []);
+
   return (
     <>
       <article>
@@ -69,7 +77,10 @@ export default function EditorView() {
               name="any-values"
               id="Any-values"
               class="text-center"
-              onChange={(e) => valueForAny.value = (e.target as any).value}
+              onChange={(e) => {
+                valueForAny.value = (e.target as any).value;
+                fetchAndShow();
+              }}
             >
               {valuesForAny.map((v, index) => (
                 <option
