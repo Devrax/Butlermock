@@ -8,8 +8,8 @@ interface TsObject<T> { raw: string, obj: KeyValueObject<T>; isProcess: boolean 
 export default class Interface2Mock {
 
     #json: KeyValueObject<unknown> = {};
-    #interfacePatternRegex = /interface(([A-Za-z0-9 ]+)({)(.+)+)(})/g;
-    #typePatternRegex = /type(([A-Za-z0-9 ]+)= ?)({)(.+)+(})/g;
+    #interfacePatternRegex = /interface(([A-Za-z0-9 ]+)({)(.+)?)(})/g;
+    #typePatternRegex = /type(([A-Za-z0-9 ]+)= ?)({)(.+)?(})/g;
 
     #interfacesCaptured: KeyValueObject<TsObject<unknown>> = {};
     #typeCaptured: KeyValueObject<TsObject<unknown>> = {};
@@ -20,16 +20,18 @@ export default class Interface2Mock {
     }
 
     #captureTypesAndInterfaces(str: string) {
-        str = str.replace(/{\n/g, '{').replace(/\n( +)/g, '').replace(/}/g, '}\n').replace(/;\n/g, ';'); //Remove any whitespace after line break
+        str = str.replace(/{ +/g, '{').replace(/{\n+/g, '{').replace(/\n( +)/g, '').replace(/}/g, '}\n').replace(/;\n/g, ';'); //Remove any whitespace after line break
         const interfacesTaken = str.match(this.#interfacePatternRegex);
         const typesTaken = str.match(this.#typePatternRegex);
 
         const reusableIterator = (arr: string[], pattern: string, storeRef: KeyValueObject<TsObject<unknown>>) => {
             for (const item of arr) {
+                if(item.match(/(.+)extends([A-Za-z0-9 ]+)/g) != null) throw new Error(`Butlermock is not capable of mocking interface inheritance yet, so we cannot provide you a mock for this interface "${item}", sorry :(`);
+
                 const processItem = new RegExp(pattern, 'g').exec(item);
                 if (processItem == null) throw new Error('Bad format for interface/type: ' + item);
                 const [useless1, useless2, hashkey, openBracket, tsObject, closingBracket] = processItem;
-
+                if(tsObject == null || tsObject === '') throw new Error(`"${item}" it seems empty, you cannot provide empty interface.`);
                 storeRef[hashkey.trim()] = {
                     raw: `${openBracket} ${tsObject} ${closingBracket}`.trim(),
                     obj: {},
@@ -39,8 +41,8 @@ export default class Interface2Mock {
             }
         }
 
-        if (interfacesTaken) reusableIterator(interfacesTaken, 'interface(([A-Za-z0-9 ]+)({)(.+)+)(})', this.#interfacesCaptured);
-        if (typesTaken) reusableIterator(typesTaken, 'type(([A-Za-z0-9 ]+)= ?)({)(.+)+(})', this.#typeCaptured);
+        if (interfacesTaken) reusableIterator(interfacesTaken, 'interface(([A-Za-z0-9 ]+)({)(.+)?)(})', this.#interfacesCaptured);
+        if (typesTaken) reusableIterator(typesTaken, 'type(([A-Za-z0-9 ]+)= ?)({)(.+)?(})', this.#typeCaptured);
         if (typesTaken == null && interfacesTaken == null) throw new Error("No interfaces or types were found");
     }
 
