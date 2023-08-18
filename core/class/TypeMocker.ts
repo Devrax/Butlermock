@@ -56,10 +56,12 @@ export default class Interface2Mock {
         if (obj == null) return null;
         const splitEachMember = obj.raw.replace(/(\n|\t|{|}| )/g, '').split(';').filter(Boolean);
         for (const member of splitEachMember) {
+
             if(member.match(/\[(.+)\]/g) || member.match(/\((.+)\)/g)) break;
+
             let [keyName, type] = member.split(':');
             type = type == null ? (`${type}`).toLocaleLowerCase() : type.trim();
-            keyName = keyName.replace('?', '');
+            keyName = keyName.replace('?', '').replace('readonly ', '');
             const deepTypeValid = typeValidation(type);
             if (deepTypeValid.isNotCustom) {
                 obj.obj[keyName] = deepTypeValid.value ?? checkConstant(keyName, deepTypeValid.type, this.anyReturn);
