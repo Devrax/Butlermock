@@ -5,12 +5,12 @@ export default function Home() {
   return (
     <>
       <Head>
-        <meta name="description" content="Easily create mocked data using your TypeScript interfaces and types" />
-        <meta name="keywords" content="mock data, TypeScript, JSON schema, development, testing, interfaces, types, Fakerjs" />
+        <meta name="description" content="Interface to JSON: Easily create mocked data using your TypeScript interfaces and types" />
+        <meta name="keywords" content="Types to json, interface to JSON, mock data, TypeScript, JSON schema, development, testing, interfaces, types, Fakerjs" />
         <meta name="author" content="Devrafx" />
 
         <meta property="og:title" content="Generate Mock Data from typescrypt's interface/type" />
-        <meta property="og:description" content="Easily create mocked data using your TypeScript interfaces and types" />
+        <meta property="og:description" content="Interface to JSON: Easily create mocked data using your TypeScript interfaces and types" />
         <meta property="og:image" content="https://butlermock.deno.dev/bartender.png" />
         <meta property="og:url" content="https://butlermock.deno.dev/" />
         <meta property="og:type" content="website" />
