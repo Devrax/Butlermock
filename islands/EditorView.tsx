@@ -68,14 +68,14 @@ export default function EditorView() {
 
     dataList.value = searchTypesAndInterface === null ? [] : searchTypesAndInterface.map((m: string) => {
       const result = regex().exec(m);
-      console.log(m, result);
-      return (result && result[2].trim()) || '';
+      return (result && (result[2] || result[3])?.trim()) || '';
     }).filter(Boolean);
   }
 
   useEffect(() => {
     setTimeout(() => {
       theEditor.onDidPaste(() => fetchAndShow());
+      theEditor.onDidBlurEditorText(() => checkInterfacesAndTypesName());
       inputRef.current!.onfocus = checkInterfacesAndTypesName;
     }, 500);
   }, []);
