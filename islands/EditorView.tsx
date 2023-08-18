@@ -1,5 +1,5 @@
 import { useSignal } from "@preact/signals";
-import { useRef, useEffect } from "preact/hooks";
+import { useRef } from "preact/hooks";
 import EditorResponse from "../components/EditorResponse.tsx";
 declare var theEditor: any;
 declare var previewer: any;
@@ -34,10 +34,6 @@ export default function EditorView() {
     "0",
     "\"lorem ipsum\""
   ];
-
-  useEffect(() => {
-    inputRef.current!.value = 'GithubUser';
-  } ,[])
 
   const fetchAndShow = async () => {
     try {

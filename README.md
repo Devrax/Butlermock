@@ -36,7 +36,7 @@ Easy peasy
 
 ``` typescript
 
-fetch(new URL("/api/typemocker", 'https://butlermock.deno.dev').href, {
+fetch(new URL("/api/mock", 'https://butlermock.deno.dev').href, {
     method: "POST",
     headers: {
       "content-type": "application/json",
