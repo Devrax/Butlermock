@@ -56,7 +56,7 @@ export default class Interface2Mock {
         if (obj == null) return null;
         const splitEachMember = obj.raw.replace(/(\n|\t|{|}| )/g, '').split(';').filter(Boolean);
         for (const member of splitEachMember) {
-            if(member.match(/\[(.+)\]/g)) break;
+            if(member.match(/\[(.+)\]/g) || member.match(/\((.+)\)/g)) break;
             let [keyName, type] = member.split(':');
             type = type == null ? (`${type}`).toLocaleLowerCase() : type.trim();
             keyName = keyName.replace('?', '');
