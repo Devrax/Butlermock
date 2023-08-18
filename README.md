@@ -75,6 +75,10 @@ new interface2mock(`interface Test {
 */
 ```
 
+### Recommedations when using the API
+
+If you are going to consume the API I suggest that you use fetch() instead of your own HTTPS calling implementation, to avoid sending credentials which I don't store, but security reasons try to use it in the way I suggest, just for privacy reasons. **REPEATING, I DO NOT STORE ANY DATA. :)**.
+
 
 # Example as standalone library
 
