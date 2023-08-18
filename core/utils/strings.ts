@@ -11,7 +11,7 @@ export default class StringPlaceholder {
         if(name.toLowerCase().includes('url')) return this.faker.internet.url();
         if(name.toLowerCase().includes('image') || name.toLocaleLowerCase().includes('img')) return this.faker.image.url();
         if(name.toLowerCase().includes('email')) return this.faker.internet.email();
-        return this.checkReservedString(name);
+        return this.checkReservedString(name.toLocaleLowerCase());
     }
 
     checkReservedString(name: string) {

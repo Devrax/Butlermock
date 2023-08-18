@@ -15,7 +15,7 @@ export const typeValidation = (type: string): { type: string, isNotCustom: boole
 
             const isNumber = !(randomValue.includes('"') || randomValue.includes("'")) && !isNaN(randomValue as unknown as number);
 
-            return { type: typeof randomValue, isNotCustom: true, value: isNumber ? Number(randomValue) : randomValue.replace(/('|")/g, '')};
+            return { type: typeof randomValue, isNotCustom: true, value: isNumber ? Number(randomValue) : randomValue.replace(/('|")/g, '').trim()};
         } else {
             const types = splitTypes.filter(t => validTypes.includes(t));
 

@@ -252,3 +252,98 @@ Deno.test("Providing a nested array type in an interface", () => {
   const objMocked = mock.buildMock('Greeting') as unknown as { hello: string, cursed: { damn: string}[]};
   assert(objMocked.cursed.length >= 0);
 });
+
+// Test Primitives Values
+
+Deno.test("Providing primitives string random value", () => {
+  const mock = new Interface2Mock(`type Name = string;
+
+  type name = string;`);
+
+  const objMocked = mock.buildMock() as unknown as { name: string, Name: string};
+  assert(objMocked.name);
+  assert(objMocked.Name);
+});
+
+Deno.test("Providing primitives random string value and a fixed value", () => {
+  const mock = new Interface2Mock(`type Name = string;
+
+  type name = "Fred";`);
+
+  const objMocked = mock.buildMock() as unknown as { name: string, Name: string};
+  assert(objMocked.name === 'Fred');
+  assert(objMocked.Name);
+});
+
+Deno.test("Providing primitives random string value along a type with non-primitive", () => {
+  const mock = new Interface2Mock(`type Name = string;
+
+  type Person = {
+    name: string;
+  };`);
+
+  const objMocked = mock.buildMock() as unknown as { Name: string, Person: { name: string }};
+  assert(objMocked.Name);
+  assert(objMocked.Person.name);
+});
+
+Deno.test("Providing primitives string fixed value along a type with non-primitive", () => {
+  const mock = new Interface2Mock(`type Name = "Fred";
+
+  type Person = {
+    name: "Fred";
+  };`);
+
+  const objMocked = mock.buildMock() as unknown as { Name: string, Person: { name: string }};
+  assert(objMocked.Name === objMocked.Person.name);
+});
+
+Deno.test("Providing primitives types with fixed value nested in other Type", () => {
+  const mock = new Interface2Mock(`type Name = "Fred";
+
+  type Person = {
+    name: Name;
+  };`);
+
+  const objMocked = mock.buildMock() as unknown as { Name: string, Person: { name: string }};
+  assert(objMocked.Name === objMocked.Person.name);
+});
+
+Deno.test("Providing primitives types with random string value nested in other Type", () => {
+  const mock = new Interface2Mock(`type Name = string;
+
+  type Person = {
+    name: Name;
+    mail: string;
+  };`);
+
+  const objMocked = mock.buildMock() as unknown as { Name: string, Person: { name: string }};
+  assert(objMocked.Person.name);
+});
+
+Deno.test("Providing primitives types with random string value nested in an interface", () => {
+  const mock = new Interface2Mock(`type Name = string;
+
+  interface Person {
+    name: Name;
+    mail: string;
+  };`);
+
+  const objMocked = mock.buildMock() as unknown as { Name: string, Person: { name: string }};
+  assert(objMocked.Person.name);
+});
+
+Deno.test("Providing primitive types, one with random string and other with random boolean value nested in an interface", () => {
+  const mock = new Interface2Mock(`
+  type IsAlive = boolean;
+  type Name = string;
+
+  interface Person {
+    name: Name;
+    isAlive: IsAlive;
+    mail: string;
+  };`);
+
+  const objMocked = mock.buildMock() as unknown as { Name: string, Person: { name: string }};
+  assert(objMocked.Person.name);
+});

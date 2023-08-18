@@ -58,7 +58,8 @@ fetch(new URL("/api/mock", 'https://butlermock.deno.dev').href, {
 
 ```
 
-> Always remember to format your interfacer or type correctly, if you forget to add ";" it may result in bad parsing
+> **Always remember to format your interfacer or type correctly, if you forget to add ";" it may result in bad parsing** ![Bad format](doc/assets/Butlemock-bad-formatting.jpeg);
+
 
 ``` typescript
 new interface2mock(`interface Test {
@@ -343,10 +344,10 @@ interface IPropertiesToAdd<T> extends Evnt<T> {
 
 <br />
 
-- [ ] Primitive Type
+- [x] Primitive Type
 ``` typescript
 // Not mockeable yet
-type justString = string; // ❌
+type justString = string; // ✅ Mockeable
 ```
 
 <br />

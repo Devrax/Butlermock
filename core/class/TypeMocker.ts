@@ -2,24 +2,55 @@ import { checkConstant } from "@core/utils/dynamicValue.ts";
 import { rand } from "@core/utils/randNumber.ts";
 import { typeValidation } from "@core/utils/typeValidation.ts";
 
+type Primitives = string | boolean | number;
 interface KeyValueObject<T> { [k: string]: T };
-interface TsObject<T> { raw: string, obj: KeyValueObject<T>; isProcess: boolean };
+interface TsObject<T> { raw: string, value: KeyValueObject<T> | Primitives; isProcess: boolean };
 
 export default class Interface2Mock {
 
     #json: KeyValueObject<unknown> = {};
     #interfacePatternRegex = /interface(([A-Za-z0-9 ]+)({)(.+)?)(})/g;
     #typePatternRegex = /type(([A-Za-z0-9 ]+)= ?)({)(.+)?(})/g;
+    #typePrimitivePatternRegex = /type(([A-Za-z0-9 ]+)= ?)([A-Za-z0-9 |"\n]+);/g
 
     #interfacesCaptured: KeyValueObject<TsObject<unknown>> = {};
     #typeCaptured: KeyValueObject<TsObject<unknown>> = {};
 
     constructor(private interfaceReference: string, private anyReturn: unknown = null) {
-        this.#captureTypesAndInterfaces(this.interfaceReference);
-        [...Object.values(this.#interfacesCaptured), ...Object.values(this.#typeCaptured)].filter(Boolean).forEach(obj => this.#process(obj));
+        this.#capturePrimitiveTypes(this.interfaceReference);
+        this.#captureStandardTypesAndInterfaces(this.interfaceReference);
+
+        if(Object.values(this.#interfacesCaptured).length === 0 && Object.values(this.#typeCaptured).length === 0) throw new Error('No interfaces or types were found');
+
+        [...Object.values(this.#interfacesCaptured), ...Object.values(this.#typeCaptured)]
+        .filter(el => Boolean(el) && !el.isProcess)
+        .forEach(obj => this.#process(obj));
     }
 
-    #captureTypesAndInterfaces(str: string) {
+
+    #capturePrimitiveTypes(str: string) {
+        const primitiveTypes = str.match(this.#typePrimitivePatternRegex);
+        if(primitiveTypes == null)  return;
+        for(let primitiveStr of primitiveTypes) {
+            primitiveStr = primitiveStr.replace(/\n+/g, ' ');
+            const processItem = (/type(([A-Za-z0-9 ]+)= ?)([A-Za-z0-9 |"\n]+);/g).exec(primitiveStr)!;
+            if (processItem == null) throw new Error('Bad format for interface/type: ' + primitiveStr);
+            const [useless, useless2, typeName, typeValue] = processItem;
+
+            const deepTypeValid = typeValidation(typeValue),
+            value = deepTypeValid.value ?? checkConstant(typeName.trim(), deepTypeValid.type, this.anyReturn) as any;
+
+            this.#typeCaptured[typeName.trim()] = {
+                raw: typeValue,
+                value,
+                isProcess: true
+            }
+
+        }
+
+    }
+
+    #captureStandardTypesAndInterfaces(str: string) {
         str = str.replace(/{ +/g, '{').replace(/{\n+/g, '{').replace(/\n( +)/g, '').replace(/}/g, '}\n').replace(/;\n/g, ';'); //Remove any whitespace after line break
         const interfacesTaken = str.match(this.#interfacePatternRegex);
         const typesTaken = str.match(this.#typePatternRegex);
@@ -34,7 +65,7 @@ export default class Interface2Mock {
                 if(tsObject == null || tsObject === '') throw new Error(`"${item}" it seems empty, you cannot provide empty interface.`);
                 storeRef[hashkey.trim()] = {
                     raw: `${openBracket} ${tsObject} ${closingBracket}`.trim(),
-                    obj: {},
+                    value: {},
                     isProcess: false
                 }
 
@@ -43,7 +74,6 @@ export default class Interface2Mock {
 
         if (interfacesTaken) reusableIterator(interfacesTaken, 'interface(([A-Za-z0-9 ]+)({)(.+)?)(})', this.#interfacesCaptured);
         if (typesTaken) reusableIterator(typesTaken, 'type(([A-Za-z0-9 ]+)= ?)({)(.+)?(})', this.#typeCaptured);
-        if (typesTaken == null && interfacesTaken == null) throw new Error("No interfaces or types were found");
     }
 
     /**
@@ -61,7 +91,7 @@ export default class Interface2Mock {
             keyName = keyName.replace('?', '');
             const deepTypeValid = typeValidation(type);
             if (deepTypeValid.isNotCustom) {
-                obj.obj[keyName] = deepTypeValid.value ?? checkConstant(keyName, deepTypeValid.type, this.anyReturn);
+                (obj.value as KeyValueObject<unknown>)[keyName] = deepTypeValid.value ?? checkConstant(keyName, deepTypeValid.type, this.anyReturn);
             } else {
                 const hashtype = String(deepTypeValid.type).replace(/\[\]/, '');
                 const checkIfThatInterfaceExist = this.#findTypeValue(hashtype);
@@ -71,15 +101,15 @@ export default class Interface2Mock {
                         const val = this.#process(foundInterface);
                         return t.includes('[]') ? new Array(rand(5)).fill(structuredClone(val)) : val
                     }
-                    const value = checkIfThatInterfaceExist?.isProcess ? checkIfThatInterfaceExist.obj : recursiveValue(deepTypeValid.type);
-                    obj.obj[keyName] = deepTypeValid.type.includes('[]') ? Array.isArray(value) ? value : [value] : value;
+                    const value = checkIfThatInterfaceExist?.isProcess ? checkIfThatInterfaceExist.value : recursiveValue(deepTypeValid.type);
+                    (obj.value as KeyValueObject<unknown>)[keyName] = deepTypeValid.type.includes('[]') ? Array.isArray(value) ? value : [value] : value;
                 } else {
-                    obj.obj[keyName] = null;
+                    (obj.value as KeyValueObject<unknown>)[keyName] = null;
                 }
             }
         }
         obj.isProcess = true;
-        return structuredClone(obj.obj);
+        return structuredClone(obj.value);
     }
 
     #findTypeValue(type: string) {
@@ -97,10 +127,10 @@ export default class Interface2Mock {
             }
 
             const selectedInterface = this.#interfacesCaptured[rootTypeInterface];
-            return selectedInterface ? selectedInterface.obj : this.#typeCaptured[rootTypeInterface].obj;
+            return selectedInterface ? selectedInterface.value : this.#typeCaptured[rootTypeInterface].value;
         }
 
-        const iterateMockedInterface = (tsObj: KeyValueObject<TsObject<unknown>>) => Object.entries(tsObj).forEach(obj => this.#json[obj[0]] = obj[1].obj);
+        const iterateMockedInterface = (tsObj: KeyValueObject<TsObject<unknown>>) => Object.entries(tsObj).forEach(obj => this.#json[obj[0]] = obj[1].value);
         iterateMockedInterface(this.#interfacesCaptured);
         iterateMockedInterface(this.#typeCaptured);
         return structuredClone(this.#json);
