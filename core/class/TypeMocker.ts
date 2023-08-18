@@ -20,7 +20,7 @@ export default class Interface2Mock {
     }
 
     #captureTypesAndInterfaces(str: string) {
-        str = str.replace(/\n( +)/g, '').replace(/}/g, '}\n').replace(/;\n/g, ';'); //Remove any whitespace after line break
+        str = str.replace(/{\n/g, '{').replace(/\n( +)/g, '').replace(/}/g, '}\n').replace(/;\n/g, ';'); //Remove any whitespace after line break
         const interfacesTaken = str.match(this.#interfacePatternRegex);
         const typesTaken = str.match(this.#typePatternRegex);
 
