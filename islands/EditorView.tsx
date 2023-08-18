@@ -26,6 +26,7 @@ const fetchTransformation = async (
 };
 
 export default function EditorView() {
+  const dataList = useSignal<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const isLoading = useSignal(false);
   const codeToShow = useSignal("");
@@ -61,9 +62,21 @@ export default function EditorView() {
     previewer.setValue("");
   };
 
+  function checkInterfacesAndTypesName () {
+    const regex = () => /(interface([0-9A-Za-z ]+){|type([0-9A-Za-z ]+)=)/g;
+    const searchTypesAndInterface = (theEditor.getValue() as string).match(regex());
+
+    dataList.value = searchTypesAndInterface === null ? [] : searchTypesAndInterface.map((m: string) => {
+      const result = regex().exec(m);
+      console.log(m, result);
+      return (result && result[2].trim()) || '';
+    }).filter(Boolean);
+  }
+
   useEffect(() => {
     setTimeout(() => {
       theEditor.onDidPaste(() => fetchAndShow());
+      inputRef.current!.onfocus = checkInterfacesAndTypesName;
     }, 500);
   }, []);
 
@@ -190,7 +203,10 @@ export default function EditorView() {
           </div>
 
           <div class="bg-[white] text-center rounded h-[50px] flex items-center p-2">
-            <input type="text" class="w-[350px]" ref={inputRef} placeholder="Interface's or Type's name" title="type the exact name of the interface's mock you want"/>
+            <input list="interface-and-types" type="text" class="w-[350px]" ref={inputRef} placeholder="Interface's or Type's name" title="type the exact name of the interface's mock you want"/>
+            <datalist id="interface-and-types">
+              {dataList.value.map(n => <option key={n.trim()} value={n.trim()} />)}
+            </datalist>
           </div>
 
         </section>
