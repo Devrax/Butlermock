@@ -4,16 +4,20 @@
 
 import * as $0 from "./routes/_404.tsx";
 import * as $1 from "./routes/_app.tsx";
-import * as $2 from "./routes/api/typemocker/index.ts";
-import * as $3 from "./routes/index.tsx";
+import * as $2 from "./routes/api/mock/_middleware.ts";
+import * as $3 from "./routes/api/mock/index.ts";
+import * as $4 from "./routes/api/typemocker/index.ts";
+import * as $5 from "./routes/index.tsx";
 import * as $$0 from "./islands/EditorView.tsx";
 
 const manifest = {
   routes: {
     "./routes/_404.tsx": $0,
     "./routes/_app.tsx": $1,
-    "./routes/api/typemocker/index.ts": $2,
-    "./routes/index.tsx": $3,
+    "./routes/api/mock/_middleware.ts": $2,
+    "./routes/api/mock/index.ts": $3,
+    "./routes/api/typemocker/index.ts": $4,
+    "./routes/index.tsx": $5,
   },
   islands: {
     "./islands/EditorView.tsx": $$0,

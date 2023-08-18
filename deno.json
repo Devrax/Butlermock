@@ -22,7 +22,8 @@
     "twind": "https://esm.sh/twind@0.16.19",
     "twind/": "https://esm.sh/twind@0.16.19/",
     "$std/": "https://deno.land/std@0.193.0/",
-    "@core/": "./core/"
+    "@core/": "./core/",
+    "@private/": "./private/"
   },
   "compilerOptions": {
     "jsx": "react-jsx",
