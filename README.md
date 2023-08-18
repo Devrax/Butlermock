@@ -2,7 +2,7 @@
 
 [![Made with Fresh](https://fresh.deno.dev/fresh-badge-dark.svg)](https://fresh.deno.dev)
 
-A website/API that builds mocks from typescript's types/interfaces into object
+Tool for building mocks from typescript's types/interfaces into object
 with actual data using Fakerjs
 
 > Documentation on develop, in the near future I will expose the endpoints for you to use it within your client application, so, stay on tune 🐒
