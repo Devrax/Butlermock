@@ -6,7 +6,7 @@ export default function Home() {
     <>
       <Head>
         <meta name="description" content="Interface to JSON: Easily create mocked data using your TypeScript interfaces and types" />
-        <meta name="keywords" content="Types to json, interface to JSON, mock data, TypeScript, JSON schema, development, testing, interfaces, types, Fakerjs" />
+        <meta name="keywords" content="Types to json, interface to JSON, mock data, TypeScript, JSON schema from interfaces, development with mock data, testing with mock data, interfaces to mock data, types to mock data, using Fakerjs for typescript interfaces" />
         <meta name="author" content="Devrafx" />
 
         <meta property="og:title" content="Generate Mock Data from typescrypt's interface/type" />
