@@ -90,7 +90,7 @@ export default function EditorView() {
       <article>
         <section class="flex justify-center items-center gap-5 flex-wrap my-3">
           <div class="bg-[white] text-center rounded h-[50px] flex items-center p-2">
-            <label for="Any-values">value for any:</label>
+            <label for="Any-values">any:</label>
             <select
               name="any-values"
               id="Any-values"
@@ -215,7 +215,7 @@ export default function EditorView() {
           </div>
 
           <div class="bg-[white] text-center rounded h-[50px] flex items-center p-2">
-            <input type="number" class="w-[100px]" ref={inputNumberRef} placeholder="2 or more"/>
+            <input type="number" inputMode="numeric" class="w-[100px]" ref={inputNumberRef} placeholder="2 or more"/>
           </div>
 
         </section>
