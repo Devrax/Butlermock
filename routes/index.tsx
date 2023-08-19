@@ -14,6 +14,7 @@ export default function Home() {
         <meta property="og:image" content="https://butlermock.deno.dev/bartender.png" />
         <meta property="og:url" content="https://butlermock.deno.dev/" />
         <meta property="og:type" content="website" />
+        <meta name="google-site-verification" content="TYIkyMqVikn-0A3PmmOXETZMcDaNiRH_uw9GAIBM1BI" />
         <title>Butlermock</title>
       </Head>
       <body class="bg-monaco-950 min-h-[100dvh]">
