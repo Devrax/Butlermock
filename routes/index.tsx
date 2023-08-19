@@ -18,7 +18,7 @@ export default function Home() {
         <title>Butlermock</title>
       </Head>
       <body class="bg-monaco-950 min-h-[100dvh]">
-        <main>
+        <main class="max-w-[2000px] px-10">
           <header>
             <section class="w-full text-monaco-50 pt-12 flex justify-center items-center">
             <button class="w-12 h-12" title="Project's logo">
@@ -34,13 +34,14 @@ export default function Home() {
                 </h3>
                 <span aria-hidden>Just type that mock!</span>
               </div>
-              <a href="https://github.com/Devrax/Butlermock" rel="noopener noreferrer" class="w-12 h-12" title="Project's repository" target="_blank">
-                <img src="/github.svg" alt="Github logo" />
-              </a>
             </section>
           </header>
 
           <EditorView />
+
+          <a href="https://github.com/Devrax/Butlermock" rel="noopener noreferrer" class="w-12 h-12 text-white" title="Project's repository" target="_blank">
+            <img src="/github.svg" alt="Github logo" class="w-12 h-12 inline-block"/> star us! :D
+          </a>
         </main>
 
         <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="devrafx" data-description="Support me on Buy me a coffee!" data-color="#888888" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
