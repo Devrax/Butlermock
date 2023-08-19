@@ -15,6 +15,7 @@ Table of contents
    * [API usage](#api-documentation)
    * [Example as standalone library](#Example-as-standalone-library)
    * [FAQs](#faqs)
+   * [Limitations](#limitations)
    * [Status](#status)
 <!--te-->
 
@@ -271,6 +272,14 @@ interface mightBeSparta {
 ### Q: Can I copy full code snippet and it will detect the interfaces?
 A: Yes :)
 ![Can I copy full code snippet and it will detect the interfaces?](doc/assets/IlustrationQuestion.png)
+
+# Limitations
+
+This section is for known limitations that Butlermocks has, but in the future might be able to recognize and mock:
+
+|type| casting | description |
+|----|---------|-------------|
+|Array| Array<string \| boolean \| number \| any>| This casting is not supported, use (string \| boolean \| number \| any)[] instead|
 
 # Status
 
