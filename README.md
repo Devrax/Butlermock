@@ -48,6 +48,7 @@ fetch(new URL("/api/mock", 'https://butlermock.deno.dev').href, {
         }`,
       valueForAny: "null", // any parseable json value, values: "null" | "\"Whatever the text you want\"" | "{}" | "0" | "1" | ... | "9"
       mustReturn: "", // empty or the top-level name of the interfaces that you provided
+      quantity: 1, // if is greater than 1, the api response will be an array of the interfaces provided
     }),
   })
   .then(res => res.json()).then(console.log); // should log:
