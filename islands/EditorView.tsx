@@ -10,6 +10,7 @@ const fetchTransformation = async (
   value: string,
   valueForAny: string,
   mustReturn = "",
+  quantity = 1
 ) => {
   const json = await fetch(new URL("/api/typemocker", location.origin).href, {
     method: "POST",
@@ -20,6 +21,7 @@ const fetchTransformation = async (
       value,
       valueForAny,
       mustReturn,
+      quantity
     }),
   });
   return JSON.stringify(await json.json(), null, 2);
@@ -28,6 +30,7 @@ const fetchTransformation = async (
 export default function EditorView() {
   const dataList = useSignal<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+  const inputNumberRef = useRef<HTMLInputElement>(null);
   const isLoading = useSignal(false);
   const codeToShow = useSignal("");
   const valueForAny = useSignal<string>("null");
@@ -44,7 +47,8 @@ export default function EditorView() {
       const code = await fetchTransformation(
         theEditor.getValue(),
         valueForAny.value,
-        inputRef.current!.value
+        inputRef.current!.value,
+        inputNumberRef.current!.valueAsNumber
       );
       codeToShow.value = code;
     } finally {
@@ -58,6 +62,7 @@ export default function EditorView() {
 
   const cleanEditors = () => {
     inputRef.current!.value = '';
+    inputNumberRef.current!.value = '';
     theEditor.setValue("");
     previewer.setValue("");
   };
@@ -203,10 +208,14 @@ export default function EditorView() {
           </div>
 
           <div class="bg-[white] text-center rounded h-[50px] flex items-center p-2">
-            <input list="interface-and-types" type="text" class="w-[350px]" ref={inputRef} placeholder="Interface's or Type's name" title="type the exact name of the interface's mock you want"/>
+            <input list="interface-and-types" type="text" class="w-[225px]" ref={inputRef} placeholder="Interface's or Type's name" title="type the exact name of the interface's mock you want"/>
             <datalist id="interface-and-types">
               {dataList.value.map(n => <option key={n.trim()} value={n.trim()} />)}
             </datalist>
+          </div>
+
+          <div class="bg-[white] text-center rounded h-[50px] flex items-center p-2">
+            <input type="number" class="w-[100px]" ref={inputNumberRef} placeholder="2 or more"/>
           </div>
 
         </section>
