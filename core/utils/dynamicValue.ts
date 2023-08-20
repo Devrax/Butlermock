@@ -23,7 +23,7 @@ export const checkConstant = (name: string, type: string, anyReturn: unknown = n
             return faker.date.anytime();
         // Array primitives
         case "string[]":
-            return forStrings.checkStringName(name, true);
+            return new Array(rand(10)).fill('.').map(() => forStrings.checkStringName(name));
         case "boolean[]":
             return new Array(rand(10)).fill('.').map(b => !!rand(2, 0));
         case "number[]":
