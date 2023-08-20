@@ -89,8 +89,8 @@ export default class Interface2Mock {
 
             if(member.match(/\[(.+)\]/g) || member.match(/\((.+)\)/g)) break;
 
-            let [keyName, type] = member.split(':');
-            type = type == null ? (`${type}`).toLocaleLowerCase() : type.trim();
+            let [keyName, ...typeValue] = member.split(':');
+            const type = typeValue == null ? (`${typeValue}`).toLocaleLowerCase() : typeValue.join('').trim();
             keyName = keyName.replace('?', '');
             const deepTypeValid = typeValidation(type);
             if (deepTypeValid.isNotCustom) {
