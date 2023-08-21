@@ -79,8 +79,8 @@ export default function EditorView() {
 
   useEffect(() => {
     setTimeout(() => {
-      theEditor.onDidPaste(() => fetchAndShow());
-      theEditor.onDidBlurEditorText(() => checkInterfacesAndTypesName());
+      theEditor?.onDidPaste(() => fetchAndShow());
+      theEditor?.onDidBlurEditorText(() => checkInterfacesAndTypesName());
       inputRef.current!.onfocus = checkInterfacesAndTypesName;
     }, 500);
   }, []);

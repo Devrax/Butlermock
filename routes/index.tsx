@@ -9,13 +9,14 @@ export default function Home() {
         <meta name="keywords" content="Typescript to json online, typescript to JSON schema, mock data, TypeScript, JSON schema from interfaces, development with mock data, testing with mock data, interfaces to mock data, types to mock data, using Fakerjs for typescript interfaces" />
         <meta name="author" content="Devrafx" />
 
-        <meta property="og:title" content="Generate Mock Data from typescrypt's interface/type" />
+        <meta property="og:title" content="Interface to JSON: Create mock data from typescript interfaces" />
         <meta property="og:description" content="Interface to JSON: Easily create mocked data using your TypeScript interfaces and types" />
         <meta property="og:image" content="https://butlermock.deno.dev/bartender.png" />
         <meta property="og:url" content="https://butlermock.deno.dev/" />
         <meta property="og:type" content="website" />
         <meta name="google-site-verification" content="TYIkyMqVikn-0A3PmmOXETZMcDaNiRH_uw9GAIBM1BI" />
         <title>Butlermock</title>
+        <script async data-id="101422815" src="//static.getclicky.com/js"></script>
       </Head>
       <body class="bg-monaco-950 min-h-[100dvh]">
         <main class="max-w-[2000px] px-10">
