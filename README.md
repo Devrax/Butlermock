@@ -21,7 +21,7 @@ Table of contents
 
 # Web usage
 
-Just go to https://butlermock.deno.dev/ and in the left panel paste your interfaces or types, just be aware of the [current limitations](#status) ( I am working for supporting the others )
+Just go to https://butlermock.online/ and in the left panel paste your interfaces or types, just be aware of the [current limitations](#status) ( I am working for supporting the others )
 
 Wait until the monaco editor shows up and paste your interfaces to later clicking the play button and the mock shows up almost immediately.
 
@@ -37,7 +37,7 @@ Easy peasy
 
 ``` typescript
 
-fetch(new URL("/api/mock", 'https://butlermock.deno.dev').href, {
+fetch(new URL("/api/mock", 'https://butlermock.online').href, {
     method: "POST",
     headers: {
       "content-type": "application/json",

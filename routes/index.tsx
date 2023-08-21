@@ -1,5 +1,15 @@
 import { Head } from "$fresh/runtime.ts";
+import { Handlers } from "$fresh/server.ts";
 import EditorView from "../islands/EditorView.tsx";
+
+export const handler: Handlers = {
+  GET: (req, ctx) => {
+    if(req.url.includes('butlermock.deno.dev')) {
+      return new Response('', { status: 302, headers: { location: 'https://butlermock.online' }});
+    }
+    return ctx.render();
+  }
+}
 
 export default function Home() {
   return (
@@ -11,8 +21,8 @@ export default function Home() {
 
         <meta property="og:title" content="Interface to JSON: Create mock data from typescript interfaces" />
         <meta property="og:description" content="Interface to JSON: Easily create mocked data using your TypeScript interfaces and types" />
-        <meta property="og:image" content="https://butlermock.deno.dev/bartender.png" />
-        <meta property="og:url" content="https://butlermock.deno.dev/" />
+        <meta property="og:image" content="https://butlermock.online/bartender.png" />
+        <meta property="og:url" content="https://butlermock.online/" />
         <meta property="og:type" content="website" />
         <meta name="google-site-verification" content="TYIkyMqVikn-0A3PmmOXETZMcDaNiRH_uw9GAIBM1BI" />
         <title>Butlermock</title>
