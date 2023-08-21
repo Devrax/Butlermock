@@ -17,3 +17,17 @@ button[disabled] {
     cursor: none;
     pointer-events: none;
 }
+
+#butlermock-content {
+    display: none;
+}
+
+@media only screen and (min-width: 746px) {
+    #butlermock-content {
+        display: revert;
+    }
+
+    #incorrect-device-dimension {
+        display: none;
+    }
+}

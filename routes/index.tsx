@@ -19,7 +19,7 @@ export default function Home() {
         <script async data-id="101422815" src="//static.getclicky.com/js"></script>
       </Head>
       <body class="bg-monaco-950 min-h-[100dvh]">
-        <main class="max-w-[2000px] px-10">
+        <main class="max-w-[2000px] px-10" id="butlermock-content">
           <header>
             <section class="w-full text-monaco-50 pt-12 flex justify-center items-center">
             <button class="w-12 h-12" title="Project's logo">
@@ -40,11 +40,15 @@ export default function Home() {
 
           <EditorView />
 
-          <a href="https://github.com/Devrax/Butlermock" rel="noopener noreferrer" class="w-12 h-12 text-white sticky bottom-10" title="Project's repository" target="_blank">
-            <img src="/github.svg" alt="Github logo" class="w-12 h-12 inline-block"/> star us! :D
+          <a href="https://github.com/Devrax/Butlermock" rel="noopener noreferrer" class="w-12 h-12 text-white fixed bottom-[18px] left-[18px]" title="Project's repository" target="_blank">
+            <img src="/github.svg" alt="Github logo" class="w-12 h-12 inline-block"/> <span class="hidden">star us! :D</span>
           </a>
         </main>
+        <div id="incorrect-device-dimension" class="text-white flex w-full h-[100dvh] justify-center items-center flex-col px-4 gap-5 text-center">
+          <span><b>Sorry!</b> we detected that <b>butlermock</b> layout will be too ugly and ackward to use, we recommend that you use tablets or bigger screens in order to have a good experience, sorry, we are working on this to give you a better experience 🥲</span>
 
+          <span>Do you like challenges? Contribute to make Butlermock accesible on mobile device's screen, we are open-source 😎 <a href="https://github.com/Devrax/Butlermock" rel="noopener noreferrer" class="text-underline">come here <img src="/github.svg" alt="Github logo" class="w-4 h-4 inline-block"/> </a></span>
+        </div>
         <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="devrafx" data-description="Support me on Buy me a coffee!" data-color="#888888" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
       </body>
     </>
