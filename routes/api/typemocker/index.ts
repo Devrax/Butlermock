@@ -7,7 +7,7 @@ export const handler: Handlers = {
             const content = await req.json();
 
             if(content.quantity && !isNaN(content.quantity) && content.quantity > 1) {
-                if(content.quantity > 50) throw new Error('Exceeded quantity, must be lower than 50 objects');
+                if(content.quantity > 10) throw new Error('Exceeded quantity, must be lower than 10 objects');
                 const mocks = [];
                 for(let i = 0; i < content.quantity; i++) {
                     const buildInterface = new Interface2Mock(content.value, JSON.parse(content.valueForAny));
