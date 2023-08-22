@@ -25,7 +25,7 @@ Just go to https://butlermock.online/ and in the left panel paste your interface
 
 Wait until the monaco editor shows up and paste your interfaces to later clicking the play button and the mock shows up almost immediately.
 
-![Clicking the play button to mock up](doc/assets/landing.png)
+![Alt text](image-1.png)
 
 > ![button guide](doc/assets/buttons.png)
 
