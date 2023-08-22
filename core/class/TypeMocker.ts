@@ -11,7 +11,7 @@ export default class Interface2Mock {
     #json: KeyValueObject<unknown> = {};
     #interfacePatternRegex = /interface(([A-Za-z0-9 ]+)({)(.+)?)(})/g;
     #typePatternRegex = /type(([A-Za-z0-9 ]+)= ?)({)(.+)?(})/g;
-    #typePrimitivePatternRegex = /type(([A-Za-z0-9 ]+)= ?)([A-Za-z0-9 |"\n]+);/g
+    #typePrimitivePatternRegex = /type(([A-Za-z0-9 ]+)= ?)(.+);/g;
 
     #interfacesCaptured: KeyValueObject<TsObject<unknown>> = {};
     #typeCaptured: KeyValueObject<TsObject<unknown>> = {};
