@@ -63,21 +63,6 @@ fetch(new URL("/api/mock", 'https://butlermock.online').href, {
 > **Always remember to format your interfacer or type correctly, if you forget to add ";" it may result in bad parsing** ![Bad format](doc/assets/Butlemock-bad-formatting.jpeg);
 
 
-``` typescript
-new interface2mock(`interface Test {
-  Hello: "World!" // No closing semicolon ( ; )
-  supa: string;
-}`).buildMock()
-
-/*
-{
-  "Test": {
-    "Hello": "World!supa"
-  }
-}
-*/
-```
-
 ### Recommedations when using the API
 
 If you are going to consume the API I suggest that you use fetch() instead of your own HTTPS calling implementation, to avoid sending credentials which I don't store, but security reasons try to use it in the way I suggest, just for privacy reasons. **REPEATING, I DO NOT STORE ANY DATA. :)**.
