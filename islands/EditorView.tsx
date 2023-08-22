@@ -1,5 +1,5 @@
 import { useSignal } from "@preact/signals";
-import { useRef, useEffect } from "preact/hooks";
+import { useEffect, useRef } from "preact/hooks";
 import EditorResponse from "../components/EditorResponse.tsx";
 
 declare var theEditor: any;
@@ -10,7 +10,7 @@ const fetchTransformation = async (
   value: string,
   valueForAny: string,
   mustReturn = "",
-  quantity = 1
+  quantity = 1,
 ) => {
   const json = await fetch(new URL("/api/typemocker", location.origin).href, {
     method: "POST",
@@ -21,7 +21,7 @@ const fetchTransformation = async (
       value,
       valueForAny,
       mustReturn,
-      quantity
+      quantity,
     }),
   });
   return JSON.stringify(await json.json(), null, 2);
@@ -34,12 +34,7 @@ export default function EditorView() {
   const isLoading = useSignal(false);
   const codeToShow = useSignal("");
   const valueForAny = useSignal<string>("null");
-  const valuesForAny = [
-    "null",
-    "{}",
-    "0",
-    "\"lorem ipsum\""
-  ];
+  const valuesForAny = ["null", "{}", "0", '"lorem ipsum"'];
 
   const fetchAndShow = async () => {
     try {
@@ -48,7 +43,7 @@ export default function EditorView() {
         theEditor.getValue(),
         valueForAny.value,
         inputRef.current!.value,
-        inputNumberRef.current!.valueAsNumber
+        inputNumberRef.current!.valueAsNumber,
       );
       codeToShow.value = code;
     } finally {
@@ -61,20 +56,26 @@ export default function EditorView() {
   };
 
   const cleanEditors = () => {
-    inputRef.current!.value = '';
-    inputNumberRef.current!.value = '';
+    inputRef.current!.value = "";
+    inputNumberRef.current!.value = "";
     theEditor.setValue("");
     previewer.setValue("");
   };
 
-  function checkInterfacesAndTypesName () {
+  function checkInterfacesAndTypesName() {
     const regex = () => /(interface([0-9A-Za-z ]+){|type([0-9A-Za-z ]+)=)/g;
-    const searchTypesAndInterface = (theEditor.getValue() as string).match(regex());
+    const searchTypesAndInterface = (theEditor.getValue() as string).match(
+      regex(),
+    );
 
-    dataList.value = searchTypesAndInterface === null ? [] : searchTypesAndInterface.map((m: string) => {
-      const result = regex().exec(m);
-      return (result && (result[2] || result[3])?.trim()) || '';
-    }).filter(Boolean);
+    dataList.value = searchTypesAndInterface === null
+      ? []
+      : searchTypesAndInterface
+        .map((m: string) => {
+          const result = regex().exec(m);
+          return (result && (result[2] || result[3])?.trim()) || "";
+        })
+        .filter(Boolean);
   }
 
   useEffect(() => {
@@ -101,10 +102,7 @@ export default function EditorView() {
               }}
             >
               {valuesForAny.map((v, index) => (
-                <option
-                  value={v}
-                  key={index}
-                >
+                <option value={v} key={index}>
                   {v}
                 </option>
               ))}
@@ -208,24 +206,41 @@ export default function EditorView() {
           </div>
 
           <div class="bg-[white] text-center rounded h-[50px] flex items-center p-2">
-            <input list="interface-and-types" type="text" class="w-[225px]" ref={inputRef} placeholder="Interface's or Type's name" title="type the exact name of the interface's mock you want"/>
+            <input
+              list="interface-and-types"
+              type="text"
+              class="w-[225px]"
+              ref={inputRef}
+              placeholder="Interface's or Type's name"
+              title="type the exact name of the interface's mock you want"
+            />
             <datalist id="interface-and-types">
-              {dataList.value.map(n => <option key={n.trim()} value={n.trim()} />)}
+              {dataList.value.map((n) => (
+                <option key={n.trim()} value={n.trim()} />
+              ))}
             </datalist>
           </div>
 
           <div class="bg-[white] text-center rounded h-[50px] flex items-center p-2">
-            <input type="number" inputMode="numeric" class="w-[100px]" ref={inputNumberRef} placeholder="2 or more"/>
+            <input
+              type="number"
+              inputMode="numeric"
+              class="w-[100px]"
+              ref={inputNumberRef}
+              placeholder="2 or more"
+            />
           </div>
-
         </section>
       </article>
-      <article class="w-full h-[70dvh] px-12 py-5 flex">
+      <article class="w-full h-[70dvh] px-12 py-5 flex relative">
         <section id="container" style="width: 50%; height: 100%;"></section>
+        <div class="flex w-full h-full justify-center items-center text-white absolute top-0 left-0" id="loader-for-monaco">
+            <img src="/butler.svg" alt="butler loader" class="w-20 h-20 animate-bounce" id="butler-spin" />
+          </div>
         <EditorResponse codeToShow={codeToShow.value} />
       </article>
 
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.1/min/vs/loader.min.js">
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.1/min/vs/loader.min.js">
       </script>
       <script src="/script/load-editor.js"></script>
     </>

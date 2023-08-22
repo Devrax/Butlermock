@@ -22,6 +22,10 @@ button[disabled] {
     display: none;
 }
 
+#container:not(:empty) + #loader-for-monaco {
+    display: none;
+}
+
 @media only screen and (min-width: 746px) {
     #butlermock-content {
         display: revert;
