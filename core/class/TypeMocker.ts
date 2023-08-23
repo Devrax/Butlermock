@@ -17,6 +17,7 @@ export default class Interface2Mock {
     #typeCaptured: KeyValueObject<TsObject<unknown>> = {};
 
     constructor(private interfaceReference: string, private anyReturn: unknown = null) {
+        this.interfaceReference = this.interfaceReference.replace(/\\;/g, "#SEMICOLON#");
         this.#capturePrimitiveTypes(this.interfaceReference);
         this.#captureStandardTypesAndInterfaces(this.interfaceReference);
 
@@ -89,7 +90,7 @@ export default class Interface2Mock {
 
             if(member.match(/\[(.+)\]/g) || member.match(/\((.+)\)/g)) break;
 
-            let [keyName, ...typeValue] = member.split(':');
+            let [keyName, ...typeValue] = member.replace('#SEMICOLON#', ';').split(':');
             const type = typeValue == null ? (`${typeValue}`).toLocaleLowerCase() : typeValue.join('').trim();
             keyName = keyName.replace('?', '');
             const deepTypeValid = typeValidation(type);

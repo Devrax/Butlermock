@@ -266,6 +266,7 @@ This section is for known limitations that Butlermocks has, but in the future mi
 |type| casting | description |
 |----|---------|-------------|
 |Array| Array<string \| boolean \| number \| any>| This casting is not supported, use (string \| boolean \| number \| any)[] instead|
+|fixed string | ";" |  When providing a fixed string value with a semicolon in it, you must use escape for that semicolon inside the string for correct json representation; Example: `interface Example { fixedString: "I am using a semicolon '\\;' so I used escaping '\\' :)"; }`|
 
 # Status
 

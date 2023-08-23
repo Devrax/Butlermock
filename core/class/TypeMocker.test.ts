@@ -347,3 +347,30 @@ Deno.test("Providing primitive types, one with random string and other with rand
   const objMocked = mock.buildMock() as unknown as { Name: string, Person: { name: string }};
   assert(objMocked.Person.name);
 });
+
+Deno.test("Providing one line single interface", () => {
+  const mock = new Interface2Mock(`interface Greeting {hello: string;}`);
+
+  const objMocked = mock.buildMock();
+  assertEquals(Object.keys(objMocked), Object.keys({ Greeting: { hello: 'world' }}));
+
+  const specificObjMocked = mock.buildMock('Greeting');
+  assertEquals(Object.keys(specificObjMocked), Object.keys({ hello: 'world' }));
+
+  const noSpecificObjMocked = mock.buildMock('');
+  assertEquals(Object.keys(noSpecificObjMocked), Object.keys({ Greeting: { hello: 'world' }}));
+});
+
+
+Deno.test("Providing one line single interface with fixed value ';'", () => {
+  const mock = new Interface2Mock(`interface Greeting {hello: "Hello World \\; ";}`);
+
+  const objMocked = mock.buildMock();
+  assertEquals(Object.keys(objMocked), Object.keys({ Greeting: { hello: 'world' }}));
+
+  const specificObjMocked = mock.buildMock('Greeting');
+  assertEquals(Object.keys(specificObjMocked), Object.keys({ hello: 'world' }));
+
+  const noSpecificObjMocked = mock.buildMock('');
+  assertEquals(Object.keys(noSpecificObjMocked), Object.keys({ Greeting: { hello: 'world' }}));
+});
