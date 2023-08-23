@@ -363,7 +363,7 @@ Deno.test("Providing one line single interface", () => {
 
 
 Deno.test("Providing one line single interface with fixed value ';'", () => {
-  const mock = new Interface2Mock(`interface Greeting {hello: "Hello World \\; ";}`);
+  const mock = new Interface2Mock(`interface Greeting {hello: "Hello World \\; \\:";}`);
 
   const objMocked = mock.buildMock();
   assertEquals(Object.keys(objMocked), Object.keys({ Greeting: { hello: 'world' }}));
