@@ -13,7 +13,7 @@ Table of contents
 <!--ts-->
    * [Web usage](#web-usage)
    * [API usage](#api-documentation)
-   * [Example as standalone library](#Example-as-standalone-library)
+   * [Example as package/library](#Example-as-package/library)
    * [FAQs](#faqs)
    * [Limitations](#limitations)
    * [Status](#status)
