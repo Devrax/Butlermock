@@ -303,10 +303,12 @@ Deno.test("Providing primitives types with fixed value nested in other Type", ()
 
   type Person = {
     name: Name;
+    url: 'https\\://example.com';
   };`);
 
-  const objMocked = mock.buildMock() as unknown as { Name: string, Person: { name: string }};
+  const objMocked = mock.buildMock() as unknown as { Name: string; Person: { name: string; url: string; }};
   assert(objMocked.Name === objMocked.Person.name);
+  assert(objMocked.Person.url === 'https://example.com');
 });
 
 Deno.test("Providing primitives types with random string value nested in other Type", () => {
