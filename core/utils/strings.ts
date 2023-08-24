@@ -5,12 +5,13 @@ export default class StringPlaceholder {
     constructor(private faker: Faker) {}
 
     checkStringName(name: string) {
+        console.log(name);
         if(name.toLowerCase().includes('id')) return this.faker.string.uuid();
         if(name.toLowerCase().includes('avatar')) return this.faker.internet.avatar()
         if(name.toLowerCase().includes('url')) return this.faker.internet.url();
         if(name.toLowerCase().includes('image') || name.toLocaleLowerCase().includes('img')) return this.faker.image.url();
         if(name.toLowerCase().includes('email')) return this.faker.internet.email();
-        return this.checkReservedString(name.toLocaleLowerCase());
+        return this.checkReservedString(name);
     }
 
     checkReservedString(name: string) {

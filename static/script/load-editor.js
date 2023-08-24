@@ -20,16 +20,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     theEditor.setValue(`interface Example {
-    avatar_url: string;
+    image: string;
     gravatar_id: string;
     url: string;
-    name: string;
-    blog: string;
+    fixedUrl: "https\\://gleeful-anterior.com";
+    fullName: string;
     location: string;
-    email?: any;
+    email?: string;
     hireable: boolean;
-    bio: string;
-    twitter_username?: any;
+    twitter_username?: string;
     following: number;
     created_at: Date;
 }`);
