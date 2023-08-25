@@ -68,9 +68,9 @@ fetch(new URL("/api/mock", 'https://butlermock.online').href, {
 If you are going to consume the API I suggest that you use fetch() instead of your own HTTPS calling implementation, to avoid sending credentials which I don't store, but security reasons try to use it in the way I suggest, just for privacy reasons. **REPEATING, I DO NOT STORE ANY DATA. :)**.
 
 
-# Example as package/library
+# Example as package/library 👷🏻‍♂️🚧
 
-[Check here](https://github.com/Devrax/Butlermock-package) :D
+[Check here](https://github.com/Devrax/Butlermock-package) > Under construction 🚧
 
 # Guide when providing an interface or type to be mocked up
 
