@@ -232,7 +232,7 @@ export default function EditorView() {
           </div>
         </section>
       </article>
-      <article class="w-full h-[70dvh] px-12 py-5 flex relative">
+      <article class="w-full h-[70dvh] lg:px-12 py-5 flex relative">
         <section id="container" style="width: 50%; height: 100%;"></section>
         <div class="flex w-full h-full justify-center items-center text-white absolute top-0 left-0" id="loader-for-monaco">
             <img src="/butler.svg" alt="butler loader" class="w-20 h-20 animate-bounce" id="butler-spin" />

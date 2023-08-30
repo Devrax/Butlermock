@@ -18,20 +18,17 @@ button[disabled] {
     pointer-events: none;
 }
 
-#butlermock-content {
-    display: none;
-}
-
 #container:not(:empty) + #loader-for-monaco {
     display: none;
 }
 
-@media only screen and (min-width: 746px) {
-    #butlermock-content {
-        display: revert;
+@media screen and (min-width: 1500px) {
+    #bmc-wbtn {
+        transform: scale(1.5) translate(-20px, -20px);
     }
 
-    #incorrect-device-dimension {
-        display: none;
+    #bmc-wbtn > img[alt="Buy Me A Coffee"] {
+        transform: scale(1.3);
     }
+
 }
