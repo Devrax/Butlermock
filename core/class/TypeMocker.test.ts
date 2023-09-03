@@ -90,7 +90,7 @@ Deno.test("Providing three interfaces with one duplication", () => {
     description: string;
     location: string;
   }
-  
+
   export interface FoundationInformation {
     id: string;
     title: string;
