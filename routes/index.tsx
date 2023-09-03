@@ -52,7 +52,7 @@ export default function Home() {
           <EditorView />
 
           <a href="https://github.com/Devrax/Butlermock" rel="noopener noreferrer" class="w-12 h-12 text-white fixed bottom-[18px] left-[18px] 2xl:w-24 2xl:h-24" title="Project's repository" target="_blank">
-            <img src="/github.svg" alt="Github logo" class="w-12 h-12 2xl:w-24 2xl:h-24 inline-block"/> <span class="hidden">star us! :D</span>
+            <img src="/github.svg" alt="Github logo" class="w-12 h-12 2xl:w-24 2xl:h-24 inline-block"/>
           </a>
         </main>
       </body>

@@ -54,7 +54,7 @@ Deno.test("Providing two interfaces - 2", () => {
     value: string;
     urlScheme: 'tel';
   }
-  
+
   export interface FoundationInformation {
     id: string;
     title: string;

@@ -51,7 +51,6 @@ export default class Interface2Mock {
 
 
     #capturePrimitiveTypes(str: string) {
-        str = str.replace(/{ +/g, '{').replace(/{\n+/g, '{').replace(/\n( +)/g, '').replace(/}/g, '}\n').replace(/;\n/g, ';'); //Remove any whitespace after line break
         const primitiveTypes = str.match(this.#typePrimitivePatternRegex);
         if(primitiveTypes == null)  return;
         for(let primitiveStr of primitiveTypes) {
