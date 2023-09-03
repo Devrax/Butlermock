@@ -163,12 +163,11 @@ export interface AnotherMockeableInterface {
 <br />
 
 
-- [ ] Interfaces that extends from other interfaces/types
+- [x] Interfaces that extends from other interfaces/types
 ``` typescript
-// Not mockeable yet
 interface That { ... }
 
-interface This extends That {} // ❌
+interface This extends That {} // ✅ Mockeable
 ```
 
 <br />

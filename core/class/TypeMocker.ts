@@ -10,6 +10,7 @@ export default class Interface2Mock {
 
     #json: KeyValueObject<unknown> = {};
     #interfacePatternRegex = /interface(([A-Za-z0-9 ]+)({)(.+)?)(})/g;
+    #interfaceExtendsPatternRegex = /interface(([A-Za-z0-9 ]+)extends([A-Za-z0-9 ]+)({)(.+)?)(})/g
     #typePatternRegex = /type(([A-Za-z0-9 ]+)= ?)({)(.+)?(})/g;
     #typePrimitivePatternRegex = /type(([A-Za-z0-9 ]+)= ?)(.+);/g;
 
@@ -26,10 +27,31 @@ export default class Interface2Mock {
         [...Object.values(this.#interfacesCaptured), ...Object.values(this.#typeCaptured)]
         .filter(el => Boolean(el) && !el.isProcess)
         .forEach(obj => this.#process(obj));
+
+        this.#captureExtendedInterfaces(this.interfaceReference);
+    }
+
+    #captureExtendedInterfaces(str: string) {
+        str = str.replace(/{ +/g, '{').replace(/{\n+/g, '{').replace(/\n( +)/g, '').replace(/}/g, '}\n').replace(/;\n/g, ';'); //Remove any whitespace after line break
+        const interfacesExtends = str.match(this.#interfaceExtendsPatternRegex);
+        if(interfacesExtends == null) return;
+        for(let interfaceExtend of interfacesExtends) {
+            interfaceExtend = interfaceExtend.replace(/\n+/g, ' ');
+            const processItem = (/interface(([A-Za-z0-9 ]+)extends([A-Za-z0-9 ]+)({)(.+)?)(})/g).exec(interfaceExtend)!;
+            if (processItem == null) throw new Error('Bad format for interface/type: ' + interfaceExtend);
+            const [useless1, useless2, keyObject, keyExtends, ...uselessRest] = processItem;
+            const existKeyExtends = (this.#interfacesCaptured[keyExtends.trim()]?.value as {}) ?? {};
+            this.#interfacesCaptured[keyObject.trim()].value = {
+                ...existKeyExtends,
+                ...this.#interfacesCaptured[keyObject.trim()].value as {},
+            }
+
+        }
     }
 
 
     #capturePrimitiveTypes(str: string) {
+        str = str.replace(/{ +/g, '{').replace(/{\n+/g, '{').replace(/\n( +)/g, '').replace(/}/g, '}\n').replace(/;\n/g, ';'); //Remove any whitespace after line break
         const primitiveTypes = str.match(this.#typePrimitivePatternRegex);
         if(primitiveTypes == null)  return;
         for(let primitiveStr of primitiveTypes) {
@@ -58,14 +80,12 @@ export default class Interface2Mock {
 
         const reusableIterator = (arr: string[], pattern: string, storeRef: KeyValueObject<TsObject<unknown>>) => {
             for (const item of arr) {
-                if(item.match(/(.+)extends([A-Za-z0-9 ]+)/g) != null) throw new Error(`Butlermock is not capable of mocking interface inheritance yet, so we cannot provide you a mock for this interface "${item}", sorry :(`);
-
-                const processItem = new RegExp(pattern, 'g').exec(item);
+                const processItem = new RegExp(pattern, 'g').exec(item.replace(/extends([A-Za-z0-9 ]+)/, ''));
                 if (processItem == null) throw new Error('Bad format for interface/type: ' + item);
                 const [useless1, useless2, hashkey, openBracket, tsObject, closingBracket] = processItem;
-                if(tsObject == null || tsObject === '') throw new Error(`"${item}" it seems empty, you cannot provide empty interface.`);
+                if((tsObject == null || tsObject === '') && !item.includes('extends')) throw new Error(`"${item}" it seems empty, you cannot provide empty interface.`);
                 storeRef[hashkey.trim()] = {
-                    raw: `${openBracket} ${tsObject} ${closingBracket}`.trim(),
+                    raw: `${openBracket} ${tsObject ?? ''} ${closingBracket}`.trim(),
                     value: {},
                     isProcess: false
                 }
@@ -78,7 +98,7 @@ export default class Interface2Mock {
     }
 
     /**
-     * This function process map each interface or types and creates the mock object assigning each value meeting its type one by one
+     * This function process/map each interface or types and creates the mock object assigning each value meeting its type one by one
      * is recursive
      * @param obj
      * @returns

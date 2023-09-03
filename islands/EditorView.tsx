@@ -73,7 +73,7 @@ export default function EditorView() {
       : searchTypesAndInterface
         .map((m: string) => {
           const result = regex().exec(m);
-          return (result && (result[2] || result[3])?.trim()) || "";
+          return ((result && (result[2] || result[3])?.trim()) || "").replace(/extends([A-Za-z0-9 ]+)/, '');
         })
         .filter(Boolean);
   }

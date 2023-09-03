@@ -5,7 +5,6 @@ export default class StringPlaceholder {
     constructor(private faker: Faker) {}
 
     checkStringName(name: string) {
-        console.log(name);
         if(name.toLowerCase().includes('id')) return this.faker.string.uuid();
         if(name.toLowerCase().includes('avatar')) return this.faker.internet.avatar()
         if(name.toLowerCase().includes('url')) return this.faker.internet.url();

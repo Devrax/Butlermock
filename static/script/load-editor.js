@@ -31,6 +31,15 @@ document.addEventListener("DOMContentLoaded", () => {
     twitter_username?: string;
     following: number;
     created_at: Date;
+    chon: string;
+}
+
+interface Hello extends Example {
+  chin: string;
+}
+
+interface World extends Example {
+  chon: number;
 }`);
 
     previewer = monaco.editor.create(document.getElementById("preview-code"), {
