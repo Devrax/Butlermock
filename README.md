@@ -89,7 +89,9 @@ const mock = new Interface2Mock(`interface Greeting {
     cursed: CursedWord[];
   }
 
-  type CursedWord = { damn: string; }`); // ✅ Butler Mock can format this way
+  type CursedWord = {
+    damn: string;
+  }`); // ✅ Butler Mock can format this way
 ```
 
 # FAQs
