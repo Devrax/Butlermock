@@ -5,7 +5,7 @@ import EditorView from "../islands/EditorView.tsx";
 export const handler: Handlers = {
   GET: (req, ctx) => {
     if(req.url.includes('butlermock.deno.dev')) {
-      return new Response('', { status: 302, headers: { location: 'https://butlermock.online' }});
+      return new Response('', { status: 301, headers: { location: 'https://butlermock.online' }});
     }
     return ctx.render();
   }
