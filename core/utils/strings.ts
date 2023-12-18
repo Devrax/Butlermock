@@ -6,9 +6,9 @@ export default class StringPlaceholder {
 
     checkStringName(name: string) {
         if(name.toLowerCase().includes('id')) return this.faker.string.uuid();
-        if(name.toLowerCase().includes('avatar')) return this.faker.internet.avatar()
+        if(name.toLowerCase().includes('avatar')) return this.faker.internet.avatar();
         if(name.toLowerCase().includes('url')) return this.faker.internet.url();
-        if(name.toLowerCase().includes('image') || name.toLocaleLowerCase().includes('img')) return this.faker.image.url();
+        if(name.toLowerCase().includes('image') || name.toLocaleLowerCase().includes('img') || name.toLocaleLowerCase().includes('thumbnail')) return this.faker.image.url();
         if(name.toLowerCase().includes('email')) return this.faker.internet.email();
         return this.checkReservedString(name);
     }
@@ -20,7 +20,7 @@ export default class StringPlaceholder {
         lastName = this.faker.person.lastName(),
         address = this.faker.location.streetAddress();
 
-        return {
+        const reservedString = {
             name: fullName,
             full_name: fullName,
             fullName: fullName,
@@ -40,6 +40,8 @@ export default class StringPlaceholder {
             bio: this.faker.lorem.paragraph(),
             description: this.faker.lorem.paragraph()
         }[name]
+
+        return reservedString || this.faker.lorem.slug({ min: 1, max: 5});
     }
 
 
