@@ -3,8 +3,8 @@ import { Handlers } from "$fresh/server.ts";
 
 export const handler: Handlers = {
     async POST(req) {
+        const content = await req.json();
         try {
-            const content = await req.json();
 
             if(content.quantity && !isNaN(content.quantity) && content.quantity > 1) {
                 if(content.quantity > 10) throw new Error('Exceeded quantity, must be lower than 10 objects');
@@ -20,6 +20,7 @@ export const handler: Handlers = {
 
             return new Response(JSON.stringify(prepareInterface.buildMock(content.mustReturn ?? '')), { status: 200, headers: { 'Content-type': 'application/json'}});
         } catch(err) {
+            console.log('Error for debugging'+ content.value);
             console.error(err);
             return new Response(JSON.stringify({ error: err?.message }), { status: 500, headers: { 'Content-Type': 'application/json'}});
         }
