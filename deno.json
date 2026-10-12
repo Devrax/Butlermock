@@ -24,6 +24,7 @@
     "$std/": "https://deno.land/std@0.193.0/",
     "@faker-js/faker": "npm:@faker-js/faker@8.4.1",
     "@std/assert": "jsr:@std/assert@^1",
+    "typescript": "npm:typescript@5.6.3",
     "@core/": "./core/",
     "@private/": "./private/"
   },
