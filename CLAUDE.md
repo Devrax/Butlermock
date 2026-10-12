@@ -18,7 +18,9 @@ deno fmt               # proseWrap "preserve"; islands/, components/, static/ ar
 deno task update       # upgrade Fresh via the official updater
 ```
 
-CI (`.github/workflows/ci.yml`) runs fmt check, lint and `deno test core/` on a pinned Deno version. Only `core/` is tested: routes and islands import `$fresh/` and cannot be exercised without the Fresh runtime, so request handling lives in `core/http/` where it can be tested with a plain `Request`.
+CI (`.github/workflows/ci.yml`) runs fmt check, lint and `deno test core/` on a pinned Deno version. Only `core/` is tested: routes and islands import `$fresh/` and cannot be exercised without the Fresh runtime, so request handling lives in `core/http/` where it can be tested with a plain `Request`. Changes to `routes/`, `islands/` or `static/` are verified by running `deno task start` and using the page; the app runs on Deno 2 (CI uses 2.9.7) and Deno 1.46.
+
+When the engine gains or loses a capability, update the "Supported TypeScript" and "Limitations" tables in `README.md` in the same change; they are the user-facing contract.
 
 Editor setup expects the `denoland.vscode-deno` extension (see `.vscode/settings.json`); formatting is Deno's formatter, not Prettier.
 
