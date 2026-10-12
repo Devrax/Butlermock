@@ -4,18 +4,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Butlermock turns TypeScript `interface`/`type` source text into mock JSON populated with Faker.js data. It is a Deno + Fresh 1.3 app (Preact, twind) with a pure-TypeScript mocking engine in `core/`. There is no Node, npm, or package.json; dependencies are URL imports resolved through the import map in `deno.json` (`lock: false`, so there is no lockfile).
+Butlermock turns TypeScript `interface`/`type`/`enum` source text into mock JSON populated with Faker.js data. It is a Deno + Fresh 1.3 app (Preact, twind) with a pure-TypeScript mocking engine in `core/`. There is no Node or package.json; dependencies resolve through the import map in `deno.json` (`lock: false`, so there is no lockfile). Fresh, Preact and twind come from deno.land/esm.sh URLs; the engine's dependencies use `npm:` (`@faker-js/faker`, `typescript`) and `jsr:` (`@std/assert`, tests only) specifiers.
 
 ## Commands
 
 ```bash
 deno task start        # dev server with --watch on static/ and routes/; regenerates fresh.gen.ts
-deno test              # run all tests (currently only core/class/TypeMocker.test.ts)
+deno task test         # deno test core/ (all engine and HTTP handler tests, with type checking)
+deno task check        # deno fmt --check && deno lint && deno test core/ (what CI runs)
 deno test core/class/TypeMocker.test.ts --filter "Providing nested Interface"   # single test
-deno lint              # rules: "fresh" + "recommended" (configured in deno.json)
-deno fmt
+deno lint              # rules: "fresh" + "recommended"; islands/, components/, static/ are excluded
+deno fmt               # proseWrap "preserve"; islands/, components/, static/ are excluded
 deno task update       # upgrade Fresh via the official updater
 ```
+
+CI (`.github/workflows/ci.yml`) runs fmt check, lint and `deno test core/` on a pinned Deno version. Only `core/` is tested: routes and islands import `$fresh/` and cannot be exercised without the Fresh runtime, so request handling lives in `core/http/` where it can be tested with a plain `Request`.
 
 Editor setup expects the `denoland.vscode-deno` extension (see `.vscode/settings.json`); formatting is Deno's formatter, not Prettier.
 
@@ -23,28 +26,21 @@ Editor setup expects the `denoland.vscode-deno` extension (see `.vscode/settings
 
 ### The mocking engine (`core/`)
 
-`core/class/TypeMocker.ts` exports `Interface2Mock`, the whole engine. It is **regex-based text processing, not a TypeScript parser**, which explains most of the limitations in the README (no inline object literals, no generics, members must end in `;`). Pipeline, all driven from the constructor:
+The engine is split into a parser (source text -> type model) and a generator (type model -> values), with `Interface2Mock` as the facade.
 
-1. Escapes `\;` and `\:` inside the source are swapped for `#SEMICOLON#` / `#TWO_POINTS#` placeholders so fixed strings can contain those characters; they are restored in `#process`.
-2. `#capturePrimitiveTypes` handles `type X = string;` style aliases (primitive or literal) and resolves them immediately.
-3. `#captureStandardTypesAndInterfaces` regex-matches `interface X {...}` and `type X = {...}` blocks (the `extends ...` clause is stripped first), storing the raw body under the name. Empty bodies throw.
-4. `#process` runs per captured block: splits the body on `;`, splits each member on `:`, passes the type text to `typeValidation`, and either produces a value via `checkConstant` or recurses into another captured interface/type (`Foo[]` becomes an array of 1-4 clones). Unknown custom types become `null`. **Any member containing `[...]` or `(...)` (index signatures, method signatures) stops processing of the remaining members in that block.**
-5. `#captureExtendedInterfaces` runs last and shallow-merges the parent's already-built value under the child's (child keys win).
-6. `buildMock(name?)` returns one block's value, or an object keyed by every captured name when no name is given.
+- `core/class/TypeMocker.ts` exports `Interface2Mock(source, anyReturn = null, { seed?, maxDepth? })` and `MockInputError`. The constructor parses the source, creates its own Faker instance (seeded when `seed` is given, with a fixed reference date so dates repeat too) and mocks **every** declaration once, eagerly. `buildMock(name?)` returns a clone of one declaration's value, or an object keyed by every declaration name (interfaces, then type aliases, then enums, each in source order; existing tests depend on interfaces coming first). The thrown messages `No interfaces or types were found`, `Not matches for key '<name>' in [<names>]` and `... it seems empty, you cannot provide empty interface.` are relied on by tests and API users.
+- `core/parser/parser.ts` (`parseSource`) runs `ts.createSourceFile` (syntax only, no program or type checker) and converts every top-level `interface`, `type` and `enum` (also inside `namespace`/`declare module` blocks) into the model in `core/parser/model.ts`. Repeated interfaces merge; any syntax error throws `MockInputError` with line/column. A backslash before `;` or `:` is stripped first, for inputs written for the old engine, which required `\;`/`\:` inside string literals. Method, call and construct signatures are dropped; types the model does not cover become `unsupported` nodes.
+- `core/parser/typescript.ts` is the only place that imports the compiler. It loads `core/parser/ts_sys_guard.ts` first, which sets `process.browser` while TypeScript initializes so the compiler skips its Node `sys` setup; otherwise loading it reads env vars and `deno test` would need `--allow-env`. Import TypeScript through this module, never directly.
+- `core/generator/generator.ts` (`MockGenerator`) walks the model. Object-like types (inline objects, interfaces with `extends`, intersections, mapped types, `Partial`/`Required`/`Readonly`/`Pick`/`Omit`/`Record`) are first resolved to a "shape" (property -> type + scope), then generated. Generic type parameters are bound per declaration in a scope (arguments, then defaults, otherwise unresolved -> `anyReturn`). Recursion is bounded by counting how often a declaration is already on the current expansion path: at `maxDepth` (default 3) the reference yields an internal `CUT` marker that becomes `[]` in arrays and `null` elsewhere; unions retry other members before accepting a cut one. Unknown plain references become `null`; unknown generic wrappers (`Promise<T>`, `Map<K, V>`), `typeof`, conditional types etc. become `anyReturn`. Arrays get 1-5 items, index signatures 1-3 keys. Every random choice goes through the injected Faker instance, never `Math.random`, so seeds stay deterministic.
+- `core/utils/dynamicValue.ts` (`checkConstant`) maps a scalar type name (`string`, `number`, `bigint`, `boolean`, `Date`, `null`, `undefined`, `any`, `unknown`, `object`, `symbol`, ...) to a Faker value; `any`/`unknown` return `anyReturn`. Add new scalar keywords here.
+- `core/utils/strings.ts` picks Faker generators from the **property name** (word `id`/`uuid`/`guid` -> uuid, contains `email`, `url`, `avatar`, `image/img/thumbnail`, `phone`, `username`, `password`, plus an exact-match table for `name`, `firstName`, `address`, `city`, `company`, `bio`, etc.). This is why mock data looks realistic without any type annotation.
 
-Supporting pieces:
+Library output can contain `bigint` and `Date` values; the HTTP layer serializes bigints as strings and dates as ISO strings.
 
-- `core/utils/typeValidation.ts` classifies a type string: literal unions pick a random literal, type unions pick a random _supported_ type, quoted strings / numbers / `true|false` become fixed values, anything else is checked against `core/constants/ValidTypes.ts` (the only primitives and `Date`/`any`, plus their `[]` forms). Add new supported scalar types there and in `checkConstant`.
-- `core/utils/dynamicValue.ts` (`checkConstant`) maps a type name to a Faker value; `any` returns the caller-supplied `anyReturn`.
-- `core/utils/strings.ts` picks Faker generators from the **property name** (contains `id` -> uuid, `email` -> email, `url`, `avatar`, `image/img/thumbnail`, plus an exact-match table for `name`, `firstName`, `address`, `bio`, etc.). This is why mock data looks realistic without any type annotation.
+### HTTP layer (`routes/` and `core/http/`)
 
-Faker is imported directly from `https://esm.sh/@faker-js/faker@8.0.2` in the utils, not through the import map.
-
-### HTTP layer (`routes/`)
-
-- `routes/api/mock/index.ts` is the public API documented in the README. `routes/api/mock/_middleware.ts` adds permissive CORS (`*`, POST) and answers OPTIONS.
-- `routes/api/typemocker/index.ts` is a near-duplicate used by the web UI (no CORS middleware, extra debug logging). Changes to request handling should be applied to both.
-- Both accept `{ value, valueForAny, mustReturn, quantity }`; `valueForAny` is parsed with `JSON.parse`, `quantity > 1` returns an array and is capped at 10. Errors return HTTP 500 with `{ error }`.
+- `core/http/mockHandler.ts` (`handleMockRequest(req)`) holds all request handling: it validates `{ value, valueForAny, mustReturn, quantity, seed }`, builds the mocks and serializes them. Input problems (bad JSON, non-string or > 100 KB `value`, unparsable `valueForAny`, `quantity` outside 1-10, non-integer `seed`, any `MockInputError`) answer 400 with `{ error }`; anything else answers 500. `quantity > 1` returns an array, each item seeded with `seed + i` when a seed is given. Tests in `core/http/mockHandler.test.ts` call it with a `Request` directly.
+- `routes/api/mock/index.ts` (public API documented in the README) and `routes/api/typemocker/index.ts` (used by the web UI) are one-line wrappers around `handleMockRequest`; keep them that way. `routes/api/mock/_middleware.ts` adds permissive CORS (`*`, POST) and answers OPTIONS for `/api/mock` only.
 - `routes/index.tsx` 301-redirects requests on `butlermock.deno.dev` to `https://butlermock.online` and otherwise renders the landing page.
 
 ### Web UI
