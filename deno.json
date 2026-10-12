@@ -22,6 +22,8 @@
     "twind": "https://esm.sh/twind@0.16.19",
     "twind/": "https://esm.sh/twind@0.16.19/",
     "$std/": "https://deno.land/std@0.193.0/",
+    "@faker-js/faker": "npm:@faker-js/faker@8.4.1",
+    "@std/assert": "jsr:@std/assert@^1",
     "@core/": "./core/",
     "@private/": "./private/"
   },
