@@ -1,20 +1,19 @@
-import { useEffect } from "preact/hooks"
+import { useEffect } from "preact/hooks";
 
-declare var previewer: any;
+import "./monaco.ts";
 
 interface EditorResponseProps {
-    codeToShow: string;
+  codeToShow: string;
 }
 
 export default function EditorResponse({ codeToShow }: EditorResponseProps) {
+  useEffect(() => {
+    previewer?.setValue(codeToShow);
+  }, [codeToShow]);
 
-    useEffect(() => {
-        previewer?.setValue(codeToShow);
-    }, [codeToShow]);
-
-    return (
-        <>
-            <section id="preview-code" style="width: 50%; height: 100%;"></section>
-        </>
-    )
+  return (
+    <>
+      <section id="preview-code" style="width: 50%; height: 100%;"></section>
+    </>
+  );
 }

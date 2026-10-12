@@ -1,15 +1,9 @@
-/// <reference no-default-lib="true" />
-/// <reference lib="dom" />
-/// <reference lib="dom.iterable" />
-/// <reference lib="dom.asynciterable" />
-/// <reference lib="deno.ns" />
+import { staticFiles } from "fresh";
+import { createApp } from "./app.ts";
 
-import "$std/dotenv/load.ts";
+export const app = createApp();
 
-import { start } from "$fresh/server.ts";
-import manifest from "./fresh.gen.ts";
+app.use(staticFiles());
 
-import twindPlugin from "$fresh/plugins/twind.ts";
-import twindConfig from "./twind.config.ts";
-
-await start(manifest, { plugins: [twindPlugin(twindConfig)] });
+// Include file-system based routes here
+app.fsRoutes();

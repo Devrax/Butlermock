@@ -1,6 +1,3 @@
-import { Handlers } from "$fresh/server.ts";
-import { handleMockRequest } from "@core/http/mockHandler.ts";
+import { mockApiHandler } from "../../../utils.ts";
 
-export const handler: Handlers = {
-  POST: (req) => handleMockRequest(req),
-};
+export const handler = mockApiHandler;

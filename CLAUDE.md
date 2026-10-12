@@ -4,25 +4,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Butlermock turns TypeScript `interface`/`type`/`enum` source text into mock JSON populated with Faker.js data. It is a Deno + Fresh 1.3 app (Preact, twind) with a pure-TypeScript mocking engine in `core/`. There is no Node or package.json; dependencies resolve through the import map in `deno.json` (`lock: false`, so there is no lockfile). Fresh, Preact and twind come from deno.land/esm.sh URLs; the engine's dependencies use `npm:` (`@faker-js/faker`, `typescript`) and `jsr:` (`@std/assert`, tests only) specifiers.
+Butlermock turns TypeScript `interface`/`type`/`enum` source text into mock JSON populated with Faker.js data. It is a Deno + Fresh 2.3 app (Preact, Vite, Tailwind CSS 4) with a pure-TypeScript mocking engine in `core/`. There is no `package.json`; dependencies resolve through the import map in `deno.json` with `"nodeModulesDir": "manual"` (Vite needs `node_modules`, so run `deno install` after cloning and after every `deno.json` change; `node_modules/` and `_fresh/` are git-ignored) and the lockfile `deno.lock` is committed. Fresh, Preact, Vite and Tailwind come from `jsr:`/`npm:` specifiers, as do the engine's dependencies (`@faker-js/faker`, `typescript`) and the test-only `@std/assert`. Do not add `deno.land` or `esm.sh` imports.
 
 ## Commands
 
 ```bash
-deno task start        # dev server with --watch on static/ and routes/; regenerates fresh.gen.ts
-deno task test         # deno test core/ (all engine and HTTP handler tests, with type checking)
-deno task check        # deno fmt --check && deno lint && deno test core/ (what CI runs)
+deno install           # fetch dependencies and create node_modules (after cloning / changing deno.json)
+deno task dev          # Vite dev server on :5173 with hot reload
+deno task build        # vite build -> _fresh/ (client assets + generated server entry _fresh/server.js)
+deno task start        # deno serve -A _fresh/server.js on :8000 (run build first)
+deno task test         # deno test core/ (no permissions) && deno test --allow-env tests/
+deno task check        # deno fmt --check && deno lint && deno check && deno task test (what CI runs)
 deno test core/class/TypeMocker.test.ts --filter "Providing nested Interface"   # single test
-deno lint              # rules: "fresh" + "recommended"; islands/, components/, static/ are excluded
-deno fmt               # proseWrap "preserve"; islands/, components/, static/ are excluded
+deno lint              # rules: "fresh" + "recommended"; only static/script/load-editor.js is excluded
+deno fmt               # proseWrap "preserve"; static SVGs, HTML and fonts/ are excluded
 deno task update       # upgrade Fresh via the official updater
 ```
 
-CI (`.github/workflows/ci.yml`) runs fmt check, lint and `deno test core/` on a pinned Deno version. Only `core/` is tested: routes and islands import `$fresh/` and cannot be exercised without the Fresh runtime, so request handling lives in `core/http/` where it can be tested with a plain `Request`. Changes to `routes/`, `islands/` or `static/` are verified by running `deno task start` and using the page; the app runs on Deno 2 (CI uses 2.9.7) and Deno 1.46.
+CI (`.github/workflows/ci.yml`) runs `deno install`, `deno task check` and `deno task build` on a pinned Deno version (2.9.7). The app requires Deno 2. Two test suites exist: `core/` (engine and `handleMockRequest`, runs without permissions, which also guards that loading the TypeScript compiler needs no `--allow-env`) and `tests/` (app level: builds an `App` from `createApp()` in `app.ts` plus the real route modules and calls it with plain `Request`s, so no build is needed; it needs `--allow-env` because Fresh reads build metadata from the environment). Islands, styling and `static/` are verified by running `deno task dev`, or `deno task build` + `deno task start`, and using the page.
 
 When the engine gains or loses a capability, update the "Supported TypeScript" and "Limitations" tables in `README.md` in the same change; they are the user-facing contract.
 
-Editor setup expects the `denoland.vscode-deno` extension (see `.vscode/settings.json`); formatting is Deno's formatter, not Prettier.
+Editor setup expects the `denoland.vscode-deno` and `bradlc.vscode-tailwindcss` extensions (see `.vscode/`); formatting is Deno's formatter, not Prettier.
 
 ## Architecture
 
@@ -39,18 +42,20 @@ The engine is split into a parser (source text -> type model) and a generator (t
 
 Library output can contain `bigint` and `Date` values; the HTTP layer serializes bigints as strings and dates as ISO strings.
 
-### HTTP layer (`routes/` and `core/http/`)
+### HTTP layer (`routes/`, `app.ts`, `utils.ts` and `core/http/`)
 
 - `core/http/mockHandler.ts` (`handleMockRequest(req)`) holds all request handling: it validates `{ value, valueForAny, mustReturn, quantity, seed }`, builds the mocks and serializes them. Input problems (bad JSON, non-string or > 100 KB `value`, unparsable `valueForAny`, `quantity` outside 1-10, non-integer `seed`, any `MockInputError`) answer 400 with `{ error }`; anything else answers 500. `quantity > 1` returns an array, each item seeded with `seed + i` when a seed is given. Tests in `core/http/mockHandler.test.ts` call it with a `Request` directly.
-- `routes/api/mock/index.ts` (public API documented in the README) and `routes/api/typemocker/index.ts` (used by the web UI) are one-line wrappers around `handleMockRequest`; keep them that way. `routes/api/mock/_middleware.ts` adds permissive CORS (`*`, POST) and answers OPTIONS for `/api/mock` only.
-- `routes/index.tsx` 301-redirects requests on `butlermock.deno.dev` to `https://butlermock.online` and otherwise renders the landing page.
+- `utils.ts` exports `define` (`createDefine<State>()`) and `mockApiHandler`: `POST` goes to `handleMockRequest(ctx.req)`, every other method answers 405 with `Allow: POST` (Fresh 2 would answer 404 for a route without a handler for the method). `routes/api/mock/index.ts` (public API documented in the README) and `routes/api/typemocker/index.ts` (used by the web UI) are one-line `export const handler = mockApiHandler`; keep them that way.
+- `app.ts` exports `createApp()` (a `new App<State>()` with CORS mounted on `/api/mock` only) and `mockCors`: Fresh's built-in `cors()` (origin `*`, methods `POST`, headers `Content-Type`, answers `OPTIONS` with 204) plus a small middleware that also puts the method/header allow-lists on actual responses, as the old middleware did. `/api/typemocker` has no CORS headers. `main.ts` is the server entry: `createApp()` + `staticFiles()` + `fsRoutes()`. It is kept separate from `app.ts` because `fsRoutes()` needs the Vite build; `tests/app.test.tsx` mounts the real route modules on `createApp()` instead.
+- `routes/index.tsx`: its `GET` handler 301-redirects requests whose host is `butlermock.deno.dev` to `https://butlermock.online/` and otherwise returns `page()`. `routes/_app.tsx` is the HTML shell (all meta/Open Graph/favicon/font tags and the Clicky and Buy Me a Coffee scripts, `<body class="bg-monaco-950 ...">`). `routes/_error.tsx` renders the 404 page (`HttpError` with status 404) or a generic error page.
+- `vite.config.ts` sets `server.cors: false` so Vite's dev server does not answer CORS preflights before Fresh does.
 
 ### Web UI
 
-- `islands/EditorView.tsx` is the only island. It does not own the editors: Monaco is loaded from a CDN by `static/script/load-editor.js`, which creates two global instances, `theEditor` (TypeScript input) and `previewer` (read-only JSON output). The island and `components/EditorResponse.tsx` reach them via `declare var`. The island waits 500ms after mount before wiring Monaco events, and detects interface/type names with its own regex to populate the name datalist.
-- `fresh.gen.ts` is generated by `dev.ts`; never edit it by hand, but do commit it after adding routes or islands.
-- Styling is twind (Tailwind-style classes); the custom `monaco` grey palette lives in `twind.config.ts`.
+- `islands/EditorView.tsx` is the only island. It does not own the editors: Monaco is loaded from a CDN by `static/script/load-editor.js`, which creates two global instances, `theEditor` (TypeScript input) and `previewer` (read-only JSON output), both `null` until Monaco has loaded. The island and `components/EditorResponse.tsx` reach them through the `declare global` block in `components/monaco.ts` (a minimal `MonacoEditor` interface). The island waits 500ms after mount before wiring Monaco events, and detects interface/type names with its own regex to populate the name datalist.
+- There is no generated manifest: Fresh 2 discovers routes and islands during `vite build`/`vite dev`, and the production server entry is `_fresh/server.js` (output of the build, git-ignored). Deno Deploy runs `deno task build` and serves `_fresh/server.js`.
+- Styling is Tailwind CSS 4 through `@tailwindcss/vite`: `client.ts` imports `assets/styles.css`, which holds `@import "tailwindcss"`, the custom `monaco` grey palette as `--color-monaco-50` ... `--color-monaco-950` theme tokens (so `bg-monaco-950`, `text-monaco-50` etc. work) and the few global rules. Other static assets stay in `static/` and are served by `staticFiles()`.
 
 ## Import map aliases
 
-`@core/` -> `./core/`. `@private/` -> `./private/` is declared but that directory is not in the repo.
+`@core/` -> `./core/`. Everything else in `deno.json` `imports` is a bare `jsr:`/`npm:` specifier (`fresh`, `preact`, `@preact/signals`, `vite`, `tailwindcss`, ...); `@types/node` is listed because `core/parser/ts_sys_guard.ts` imports `node:process` and `deno check` resolves its types from `node_modules`.
