@@ -2,7 +2,17 @@
   "lock": false,
   "tasks": {
     "start": "deno run -A --watch=static/,routes/ dev.ts",
-    "update": "deno run -A -r https://fresh.deno.dev/update ."
+    "update": "deno run -A -r https://fresh.deno.dev/update .",
+    "test": "deno test core/",
+    "check": "deno fmt --check && deno lint && deno test core/"
+  },
+  "fmt": {
+    "proseWrap": "preserve",
+    "exclude": [
+      "islands/",
+      "components/",
+      "static/"
+    ]
   },
   "lint": {
     "rules": {
@@ -10,7 +20,12 @@
         "fresh",
         "recommended"
       ]
-    }
+    },
+    "exclude": [
+      "islands/",
+      "components/",
+      "static/"
+    ]
   },
   "imports": {
     "$fresh/": "https://deno.land/x/fresh@1.3.1/",

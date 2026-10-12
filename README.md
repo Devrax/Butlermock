@@ -9,16 +9,17 @@ with actual data using Fakerjs
 
 > Documentation on develop, in the near future I will expose the endpoints for you to use it within your client application, so, stay on tune 🐒
 
-Table of contents
-=================
+# Table of contents
 
 <!--ts-->
-   * [Web usage](#web-usage)
-   * [API usage](#api-documentation)
-   * [Example as package/library](#Example-as-package/library)
-   * [FAQs](#faqs)
-   * [Limitations](#limitations)
-   * [Status](#status)
+
+- [Web usage](#web-usage)
+- [API usage](#api-documentation)
+- [Example as package/library](#Example-as-package/library)
+- [FAQs](#faqs)
+- [Limitations](#limitations)
+- [Status](#status)
+
 <!--te-->
 
 # Web usage
@@ -37,38 +38,34 @@ Wait until the monaco editor shows up and paste your interfaces to later clickin
 
 Easy peasy
 
-``` typescript
-
-fetch(new URL("/api/mock", 'https://butlermock.online').href, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      value: `interface Test {
+```typescript
+fetch(new URL("/api/mock", "https://butlermock.online").href, {
+  method: "POST",
+  headers: {
+    "content-type": "application/json",
+  },
+  body: JSON.stringify({
+    value: `interface Test {
         Hello: "World!";
         }`,
-      valueForAny: "null", // any parseable json value, values: "null" | "\"Whatever the text you want\"" | "{}" | "0" | "1" | ... | "9"
-      mustReturn: "", // empty or the top-level name of the interfaces that you provided
-      quantity: 1, // if is greater than 1, the api response will be an array of the interfaces provided
-    }),
-  })
-  .then(res => res.json()).then(console.log); // should log:
-  //{
-  // "Test": {
-  //    "Hello": "World!"
-  //  }
-  //}
-
+    valueForAny: "null", // any parseable json value, values: "null" | "\"Whatever the text you want\"" | "{}" | "0" | "1" | ... | "9"
+    mustReturn: "", // empty or the top-level name of the interfaces that you provided
+    quantity: 1, // if is greater than 1, the api response will be an array of the interfaces provided
+  }),
+})
+  .then((res) => res.json()).then(console.log); // should log:
+//{
+// "Test": {
+//    "Hello": "World!"
+//  }
+//}
 ```
 
 > **Always remember to format your interfacer or type correctly, if you forget to add ";" it may result in bad parsing** ![Bad format](doc/assets/Butlemock-bad-formatting.jpeg);
 
-
 ### Recommedations when using the API
 
 If you are going to consume the API I suggest that you use fetch() instead of your own HTTPS calling implementation, to avoid sending credentials which I don't store, but security reasons try to use it in the way I suggest, just for privacy reasons. **REPEATING, I DO NOT STORE ANY DATA. :)**.
-
 
 # Example as package/library 👷🏻‍♂️🚧
 
@@ -99,11 +96,14 @@ const mock = new Interface2Mock(`interface Greeting {
 # FAQs
 
 ### **Q: Is it using an AI?**
+
 A: No :)
 
 ### Q: How can I tell the API or website to give me a fixed value?
+
 A: You just type explicitly the value you want:
-``` typescript
+
+```typescript
 interface ThisIsSparta {
   troops: 300;
   leader: "Leonidas";
@@ -118,6 +118,7 @@ interface mightBeSparta {
 ```
 
 ### Q: Can I copy full code snippet and it will detect the interfaces?
+
 A: Yes :)
 ![Can I copy full code snippet and it will detect the interfaces?](doc/assets/IlustrationQuestion.png)
 
@@ -125,14 +126,15 @@ A: Yes :)
 
 This section is for known limitations that Butlermocks has, but in the future might be able to recognize and mock:
 
-|type| casting | description |
-|----|---------|-------------|
-|Array| Array<string \| boolean \| number \| any>| This casting is not supported, use (string \| boolean \| number \| any)[] instead|
-|fixed string | When fixed string includes ";" or ":" |  When providing a fixed string value with a semicolon in it, you must use escape for that semicolon inside the string for correct json representation; Example: `interface Example { fixedString: "I am using a semicolon '\\;' so I used escaping '\\' :)"; }`|
+| type         | casting                                   | description                                                                                                                                                                                                                                                    |
+| ------------ | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Array        | Array<string \| boolean \| number \| any> | This casting is not supported, use (string \| boolean \| number \| any)[] instead                                                                                                                                                                              |
+| fixed string | When fixed string includes ";" or ":"     | When providing a fixed string value with a semicolon in it, you must use escape for that semicolon inside the string for correct json representation; Example: `interface Example { fixedString: "I am using a semicolon '\\;' so I used escaping '\\' :)"; }` |
 
 # Status
 
-- [x] *Interfaces*
+- [x] _Interfaces_
+
 ```typescript
 interface NonMockeableInterface {} // ❌ empty interface
 
@@ -148,10 +150,11 @@ export interface AnotherMockeableInterface {
 <br />
 
 - [x] Interfaces with nested interfaces/types
+
 ```typescript
 type mockeableType = {
   name: string;
-} // ✅ Mockeable
+}; // ✅ Mockeable
 
 interface MockeableInterface {
   somethingToMock: any;
@@ -166,9 +169,9 @@ export interface AnotherMockeableInterface {
 
 <br />
 
-
 - [x] Interfaces that extends from other interfaces/types
-``` typescript
+
+```typescript
 interface That { ... }
 
 interface This extends That {} // ✅ Mockeable
@@ -177,7 +180,8 @@ interface This extends That {} // ✅ Mockeable
 <br />
 
 - [ ] Generic Interfaces
-``` typescript
+
+```typescript
 // Not mockeable yet
 interface This<T> {
   here: T;
@@ -187,6 +191,7 @@ interface This<T> {
 <br />
 
 - [ ] Generic Interfaces that extends from other interfaces/types
+
 ```Typescript
 // Not mockeable yet
 interface Evnt<T> {
@@ -202,7 +207,8 @@ interface IPropertiesToAdd<T> extends Evnt<T> {
 <br />
 
 - [x] Primitive Type
-``` typescript
+
+```typescript
 // Not mockeable yet
 type justString = string; // ✅ Mockeable
 ```
@@ -210,20 +216,21 @@ type justString = string; // ✅ Mockeable
 <br />
 
 - [x] Type object
-``` typescript
+
+```typescript
 type justString = {
-  yes: 'you can';
+  yes: "you can";
 }; // ✅ Mockeable
 ```
 
 <br />
 
 - [x] Type with nested interfaces/types
-``` typescript
 
+```typescript
 type mockeableType = {
   nestedObject: MockeableInterface;
-} // ✅ Mockeable
+}; // ✅ Mockeable
 
 interface MockeableInterface {
   somethingToMock: any;
@@ -233,10 +240,11 @@ interface MockeableInterface {
 <br />
 
 - [ ] Generic Type
-``` typescript
+
+```typescript
 // Not mockeable yet
 type IPropertiesToAdd<T extends {}> = T & {
-    on(): void
-    off(): void
+  on(): void;
+  off(): void;
 }; // ❌
 ```

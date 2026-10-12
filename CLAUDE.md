@@ -33,7 +33,8 @@ Editor setup expects the `denoland.vscode-deno` extension (see `.vscode/settings
 6. `buildMock(name?)` returns one block's value, or an object keyed by every captured name when no name is given.
 
 Supporting pieces:
-- `core/utils/typeValidation.ts` classifies a type string: literal unions pick a random literal, type unions pick a random *supported* type, quoted strings / numbers / `true|false` become fixed values, anything else is checked against `core/constants/ValidTypes.ts` (the only primitives and `Date`/`any`, plus their `[]` forms). Add new supported scalar types there and in `checkConstant`.
+
+- `core/utils/typeValidation.ts` classifies a type string: literal unions pick a random literal, type unions pick a random _supported_ type, quoted strings / numbers / `true|false` become fixed values, anything else is checked against `core/constants/ValidTypes.ts` (the only primitives and `Date`/`any`, plus their `[]` forms). Add new supported scalar types there and in `checkConstant`.
 - `core/utils/dynamicValue.ts` (`checkConstant`) maps a type name to a Faker value; `any` returns the caller-supplied `anyReturn`.
 - `core/utils/strings.ts` picks Faker generators from the **property name** (contains `id` -> uuid, `email` -> email, `url`, `avatar`, `image/img/thumbnail`, plus an exact-match table for `name`, `firstName`, `address`, `bio`, etc.). This is why mock data looks realistic without any type annotation.
 
