@@ -1,10 +1,7 @@
 import { useSignal } from "@preact/signals";
 import { useEffect, useRef } from "preact/hooks";
 import EditorResponse from "../components/EditorResponse.tsx";
-
-declare var theEditor: any;
-
-declare var previewer: any;
+import "../components/monaco.ts";
 
 const fetchTransformation = async (
   value: string,
@@ -40,7 +37,7 @@ export default function EditorView() {
     try {
       isLoading.value = true;
       const code = await fetchTransformation(
-        theEditor.getValue(),
+        theEditor!.getValue(),
         valueForAny.value,
         inputRef.current!.value,
         inputNumberRef.current!.valueAsNumber,
@@ -51,20 +48,20 @@ export default function EditorView() {
     }
   };
 
-  const fetchAndCopy = async () => {
-    navigator.clipboard.writeText(previewer.getValue());
+  const fetchAndCopy = () => {
+    navigator.clipboard.writeText(previewer!.getValue());
   };
 
   const cleanEditors = () => {
     inputRef.current!.value = "";
     inputNumberRef.current!.value = "";
-    theEditor.setValue("");
-    previewer.setValue("");
+    theEditor!.setValue("");
+    previewer!.setValue("");
   };
 
   function checkInterfacesAndTypesName() {
     const regex = () => /(interface([0-9A-Za-z ]+){|type([0-9A-Za-z ]+)=)/g;
-    const searchTypesAndInterface = (theEditor.getValue() as string).match(
+    const searchTypesAndInterface = theEditor!.getValue().match(
       regex(),
     );
 
@@ -73,7 +70,10 @@ export default function EditorView() {
       : searchTypesAndInterface
         .map((m: string) => {
           const result = regex().exec(m);
-          return ((result && (result[2] || result[3])?.trim()) || "").replace(/extends([A-Za-z0-9 ]+)/, '');
+          return ((result && (result[2] || result[3])?.trim()) || "").replace(
+            /extends([A-Za-z0-9 ]+)/,
+            "",
+          );
         })
         .filter(Boolean);
   }
@@ -97,7 +97,7 @@ export default function EditorView() {
               id="Any-values"
               class="text-center"
               onChange={(e) => {
-                valueForAny.value = (e.target as any).value;
+                valueForAny.value = (e.target as HTMLSelectElement).value;
                 fetchAndShow();
               }}
             >
@@ -110,6 +110,7 @@ export default function EditorView() {
           </div>
           <div class="text-monaco-950 fill-monaco-950 bg-monaco-50 rounded w-[150px] h-[50px] flex justify-evenly items-center">
             <button
+              type="button"
               onClick={() => fetchAndShow()}
               title="Show me mock"
               disabled={isLoading.value}
@@ -162,6 +163,7 @@ export default function EditorView() {
                 )}
             </button>
             <button
+              type="button"
               onClick={() => fetchAndCopy()}
               title="Just copy, I trust on butlermock"
               disabled={isLoading.value}
@@ -183,6 +185,7 @@ export default function EditorView() {
               </svg>
             </button>
             <button
+              type="button"
               title="Clean the code"
               onClick={() => cleanEditors()}
               disabled={isLoading.value}
@@ -234,13 +237,21 @@ export default function EditorView() {
       </article>
       <article class="w-full h-[70dvh] lg:px-12 py-5 flex relative">
         <section id="container" style="width: 50%; height: 100%;"></section>
-        <div class="flex w-full h-full justify-center items-center text-white absolute top-0 left-0" id="loader-for-monaco">
-            <img src="/butler.svg" alt="butler loader" class="w-20 h-20 animate-bounce" id="butler-spin" />
-          </div>
+        <div
+          class="flex w-full h-full justify-center items-center text-white absolute top-0 left-0"
+          id="loader-for-monaco"
+        >
+          <img
+            src="/butler.svg"
+            alt="butler loader"
+            class="w-20 h-20 animate-bounce"
+            id="butler-spin"
+          />
+        </div>
         <EditorResponse codeToShow={codeToShow.value} />
       </article>
 
-       <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.1/min/vs/loader.min.js">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.1/min/vs/loader.min.js">
       </script>
       <script src="/script/load-editor.js"></script>
     </>
