@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@theme {
+  --color-monaco-50: #f6f6f6;
+  --color-monaco-100: #e7e7e7;
+  --color-monaco-200: #d1d1d1;
+  --color-monaco-300: #b0b0b0;
+  --color-monaco-400: #888888;
+  --color-monaco-500: #6d6d6d;
+  --color-monaco-600: #5d5d5d;
+  --color-monaco-700: #4f4f4f;
+  --color-monaco-800: #454545;
+  --color-monaco-900: #3d3d3d;
+  --color-monaco-950: #1e1e1e;
+}
+
+html,
+body {
+  font-family: "Poppins", Arial, Helvetica, sans-serif;
+}
+
+button,
+select {
+  -webkit-tap-highlight-color: none;
+  outline: none;
+}
+
+button:focus-within,
+button:focus,
+select:focus,
+select:focus-within,
+input:focus,
+input:focus-within {
+  outline: none;
+}
+
+button[disabled] {
+  opacity: 0.5;
+  user-select: none;
+  cursor: none;
+  pointer-events: none;
+}
+
+#container:not(:empty) + #loader-for-monaco {
+  display: none;
+}
+
+@media screen and (min-width: 1536px) {
+  #bmc-wbtn {
+    transform: scale(1.5) translate(-20px, -20px);
+  }
+
+  #bmc-wbtn > img[alt="Buy Me A Coffee"] {
+    transform: scale(1.3);
+  }
+}
