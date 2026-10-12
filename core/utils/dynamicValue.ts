@@ -1,44 +1,43 @@
-import { fakerEN } from "https://esm.sh/@faker-js/faker@8.0.2";
+import { type Faker, fakerEN } from "@faker-js/faker";
 import StringPlaceholder from "@core/utils/strings.ts";
-import { rand } from "@core/utils/randNumber.ts";
-const faker = fakerEN;
 
-const forStrings = new StringPlaceholder(faker);
-
-export const checkConstant = (name: string, type: string, anyReturn: unknown = null) => {
-    switch(type) {
-        // Primitives
-        case "string":
-            return forStrings.checkStringName(name) ?? faker.lorem.slug({ min: 1, max: rand(5, 2)});
-        case "boolean":
-            return Boolean(rand(2,0));
-        case "number":
-        case "bigInt":
-            return faker.number[type === "bigInt" ? 'bigInt' : 'int']();
-        case "null":
-        case "undefined":
-            return null;
-        // Non primitives
-        case "Date":
-            return faker.date.anytime();
-        // Array primitives
-        case "string[]":
-            return new Array(rand(10)).fill('.').map(() => forStrings.checkStringName(name));
-        case "boolean[]":
-            return new Array(rand(10)).fill('.').map(b => !!rand(2, 0));
-        case "number[]":
-        case "bigint[]":
-            return new Array(rand(10)).fill('.').map(n => type === 'bigint[]' ? BigInt(rand(10, 0)) : rand(10, 0));
-        case 'null[]':
-        case 'undefined[]':
-            return new Array(rand(5, 0)).fill(null);
-        // Array non-primitive
-        case 'Date[]':
-            return new Array(rand(10, 0)).fill('.').map((_) => faker.date.anytime())
-        case 'any':
-        case 'any[]':
-            return anyReturn;
-        default:
-            return null;
-    }
-}
+/**
+ * Maps a scalar type name to a Faker value. `name` is the property the value
+ * is generated for and drives the string heuristics in `StringPlaceholder`.
+ * Unknown type names return null.
+ */
+export const checkConstant = (
+  name: string,
+  type: string,
+  anyReturn: unknown = null,
+  faker: Faker = fakerEN,
+): unknown => {
+  switch (type) {
+    // Primitives
+    case "string":
+      return new StringPlaceholder(faker).checkStringName(name);
+    case "boolean":
+      return faker.datatype.boolean();
+    case "number":
+      return faker.number.int();
+    case "bigint":
+      return faker.number.bigInt();
+    case "symbol":
+      return `Symbol(${faker.lorem.word()})`;
+    case "null":
+    case "undefined":
+    case "void":
+    case "never":
+      return null;
+    // Non primitives
+    case "Date":
+      return faker.date.anytime();
+    case "object":
+      return {};
+    case "any":
+    case "unknown":
+      return anyReturn;
+    default:
+      return null;
+  }
+};
