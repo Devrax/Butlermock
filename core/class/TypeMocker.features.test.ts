@@ -230,6 +230,7 @@ Deno.test("built-in utility types", () => {
     type F = Record<"x" | "y", number>;
     type G = Record<string, boolean>;
     type H = Promise<User>;
+    type I = keyof User;
   `;
   const keys = (name: string) => Object.keys(mockOf(source, name));
   assertEquals(keys("A"), ["id", "name", "age"]);
@@ -242,6 +243,7 @@ Deno.test("built-in utility types", () => {
   assert(Object.keys(record).length >= 1);
   assert(Object.values(record).every((v) => typeof v === "boolean"));
   assertEquals(mockOf<unknown>(source, "H", "ANY"), "ANY");
+  assert(["id", "name", "age"].includes(mockOf<string>(source, "I")));
 });
 
 Deno.test("scalar types and literals", () => {

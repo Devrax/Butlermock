@@ -123,7 +123,7 @@ export class MockGenerator {
       case "reference":
         return this.#reference(node, scope, name, strict);
       case "keyof": {
-        const keys = this.#keysOf(node.type, scope);
+        const keys = this.#keysOf(node, scope);
         return keys && keys.length > 0
           ? this.#faker.helpers.arrayElement(keys)
           : checkConstant(name, "string", this.#anyReturn, this.#faker);
